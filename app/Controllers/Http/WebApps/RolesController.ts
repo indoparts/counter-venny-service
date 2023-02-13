@@ -7,25 +7,8 @@ export default class RolesController {
         try {
             await bouncer.authorize("read-role")
             if (await bouncer.allows('read-role')) {
-                const page = request.input('page', 1)
-                const limit = request.input('limit', 1)
-                const sortDesc = request.input('sortDesc', false)
-                const sortBy = request.input('sortBy')
-                const search = request.input('search')
-                const between = request.input('between')
-                if (between !== '') {
-                    const data = await Role.query()
-                    .where(sortBy !== '' ? sortBy : 'rolename', 'LIKE', '%' + search + '%')
-                    .whereBetween('created_at', between.split(","))
-                    .orderBy([
-                        {
-                            column: sortBy !== '' ? sortBy : 'created_at',
-                            order: sortDesc ? 'desc' : 'asc',
-                        }
-                    ]).paginate(page, limit)
-                return response.ok(data)   
-                } else {
-                    const data = await Role.query()
+                const { sortBy, search, sortDesc, page, limit } = request.all()
+                const fetch = await Role.query()
                     .where(sortBy !== '' ? sortBy : 'rolename', 'LIKE', '%' + search + '%')
                     .orderBy([
                         {
@@ -33,13 +16,10 @@ export default class RolesController {
                             order: sortDesc ? 'desc' : 'asc',
                         }
                     ]).paginate(page, limit)
-                return response.ok(data)
-                }
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            console.log(error);
-
-            // return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -50,21 +30,23 @@ export default class RolesController {
                 const validate = await request.validate(RoleValidator)
                 const role = new Role()
                 role.merge(validate)
-                return await role.save()
+                await role.save()
+                return response.send({ status: true, data: validate, msg: 'success' })
             }
         } catch (error) {
-            return response.unprocessableEntity(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
-    public async show({ bouncer, request }: HttpContextContract) {
+    public async show({ bouncer, request, response }: HttpContextContract) {
         try {
             await bouncer.authorize("read-role")
             if (await bouncer.allows('read-role')) {
-                return await Role.find(request.param('id'));
+                const fetch = await Role.find(request.param('id'));
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            return error
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -75,10 +57,11 @@ export default class RolesController {
                 const payload = await request.validate(RoleValidator)
                 const role = await Role.findOrFail(request.param('id'))
                 role.merge(payload)
-                return await role.save()
+                await role.save()
+                return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            return response.unprocessableEntity(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -87,10 +70,11 @@ export default class RolesController {
             await bouncer.authorize("delete-role")
             if (await bouncer.allows('delete-role')) {
                 const role = await Role.findOrFail(request.param('id'))
-                return await role.delete()
+                await role.delete()
+                return response.send({ status: true, data: {}, msg: 'success' })
             }
         } catch (error) {
-            return response.badRequest(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 }

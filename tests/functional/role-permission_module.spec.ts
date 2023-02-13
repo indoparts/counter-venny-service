@@ -16,27 +16,27 @@ test.group('Role module', () => {
     console.log(res.body());
   })
 
-  // test('role-permissions store test', async ({ client }) => {
-  //   const user = await User.findOrFail(1)
-  //   const res = await client
-  //     .post('/api/role-permission')
-  //     .form({
-  //       role_id: 6, permission_id: [ 16, 15, 14, 13 ]
-  //     })
-  //     .loginAs(user)
-  //   console.log(res.body());
-  // })
+  test('role-permissions store test', async ({ client }) => {
+    const user = await User.findOrFail(1)
+    const res = await client
+      .post('/api/role-permission')
+      .form({
+        role_id: 6, permission_id: [ 16, 15, 14, 13 ]
+      })
+      .loginAs(user)
+    console.log(res.body());
+  })
 
-  // test('role-permissions store validation test', async ({ client }) => {
-  //   const user = await User.findOrFail(1)
-  //   const res = await client
-  //     .post('/api/role-permission')
-  //     .form({
-  //       role_id: null, permission_id: [ ]
-  //     })
-  //     .loginAs(user)
-  //   console.log(res.body());
-  // })
+  test('role-permissions store validation test', async ({ client }) => {
+    const user = await User.findOrFail(1)
+    const res = await client
+      .post('/api/role-permission')
+      .form({
+        role_id: null, permission_id: [ ]
+      })
+      .loginAs(user)
+    console.log(res.body());
+  })
 
   test('role-permissions show test', async ({ client }) => {
     const user = await User.findOrFail(1)

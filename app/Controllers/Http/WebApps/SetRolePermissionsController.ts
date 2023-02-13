@@ -10,18 +10,20 @@ export default class SetRolePermissionsController {
         try {
             await bouncer.authorize("read-permission")
             if (await bouncer.allows('read-permission')) {
-                const page = request.input('page', 1)
-                const limit = request.input('limit', 1)
-                const sortDesc = request.input('sortDesc', false)
-                return await RoleHasPermission.query().preload('roles').preload('permission').orderBy([
+                const { page, limit, sortDesc } = request.all()
+                const fetch = await RoleHasPermission.query()
+                .preload('roles')
+                .preload('permission')
+                .orderBy([
                     {
                         column: 'id',
                         order: sortDesc ? 'desc' : 'asc',
                     }
                 ]).paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status:false, data:error.messages, msg:'error' })
         }
     }
 
@@ -50,10 +52,10 @@ export default class SetRolePermissionsController {
                     })
                 }
                 await RoleHasPermission.updateOrCreateMany(['role_id','permission_id'],arrname)
-                return response.ok('success')
+                return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status:false, data:error.messages, msg:'error' })
         }
     }
 
@@ -63,10 +65,10 @@ export default class SetRolePermissionsController {
             if (await bouncer.allows('read-permission')) {
                 const jabatan = await Role.all()
                 const akses = await Permission.all()
-                return response.ok({ "role": jabatan, "akses": akses })
+                return response.send({ status: true, data: { "role": jabatan, "akses": akses }, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status:false, data:error.messages, msg:'error' })
         }
     }
 
@@ -77,10 +79,10 @@ export default class SetRolePermissionsController {
                 const id = request.param('id')
                 const fetch = await RoleHasPermission.query()
                 .where('role_id', id)
-                return response.ok(fetch)
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status:false, data:error.messages, msg:'error' })
         }
     }
 
@@ -110,12 +112,10 @@ export default class SetRolePermissionsController {
                     arrname.push(fetch[i])
                 }
                 await (await Role.findOrFail(payload.role_id)).related('permission').sync(arrname)
-                return response.ok('success')
+                return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            // response.status(error.status).send(error.messages)
-            console.log(error);
-            
+            return response.send({ status:false, data:error.messages, msg:'error' })
         }
     }
 
@@ -127,10 +127,10 @@ export default class SetRolePermissionsController {
                 if (q) {
                     await q.delete()
                 }
-                return response.ok('success permission destroy')
+                return response.send({ status: true, data: {}, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status:false, data:error.messages, msg:'error' })
         }
     }
 }

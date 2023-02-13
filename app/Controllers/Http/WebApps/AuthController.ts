@@ -36,11 +36,9 @@ export default class AuthController {
             const token = await auth.use("api").login(user, {
                 expiresIn: "1 days",
             });
-            return response.send(token.toJSON())
+            return response.send({ status: true, data: token, msg: 'success' })
         } catch (error) {
-            console.log(error);
-            
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
     /*
@@ -54,9 +52,9 @@ export default class AuthController {
             const token = await auth.use("api").attempt(payload.email, payload.password, {
                 expiresIn: "1 days",
             });
-            return response.status(200).send(token.toJSON())
+            return response.send({ status: true, data: token, msg: 'success' })
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
     /*
@@ -88,16 +86,17 @@ export default class AuthController {
                     "role_name": rolename?.rolename,
                     "dept_name": deptname?.deptname,
                     "name": updateUser.name,
+                    "email": updateUser.email,
                     "nik": updateUser.nik,
                     "activation": updateUser.activation,
                     "avatar": updateUser.avatar,
                     "work_location": updateUser.work_location,
                     "saldo_cuti": updateUser.saldo_cuti,
                 };
-                return response.ok({ user: q, permission: arr });
+                return response.send({ status: true, data: { user: q, permission: arr }, msg: 'success' })
             }
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
     /*
@@ -132,9 +131,9 @@ export default class AuthController {
             user.work_location = payload.work_location
             user.saldo_cuti = payload.saldo_cuti
             await user.save()
-            return response.status(200).send("success")
+            return response.send({ status: true, data: payload, msg: 'success' })
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
     /*
@@ -151,10 +150,9 @@ export default class AuthController {
                 }
             }
             const msg = (await auth.check()) ? 'Success logout' : 'Invalid Credential'
-            const status = (await auth.check()) ? 200 : 401
-            return response.status(status).send(msg)
+            return response.send({ status: true, data: msg, msg: 'success' })
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 }

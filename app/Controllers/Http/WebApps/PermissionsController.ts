@@ -8,19 +8,17 @@ export default class PermissionsController {
         try {
             await bouncer.authorize("read-permission")
             if (await bouncer.allows('read-permission')) {
-                const page = request.input('page', 1)
-                const limit = request.input('limit', 1)
-                const sortDesc = request.input('sortDesc', false)
-                const search = request.input('search')
-                return await Permission.query().where('name', 'LIKE', '%'+search+'%').orderBy([
+                const { sortBy, search, sortDesc, page, limit } = request.all()
+                const fetch = await Permission.query().where('name', 'LIKE', '%'+search+'%').orderBy([
                     {
-                        column: 'id',
+                        column: sortBy,
                         order: sortDesc ? 'desc' : 'asc',
                     }
                 ]).paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -50,12 +48,12 @@ export default class PermissionsController {
                         })
                     }
                     await Permission.createMany(arrname)
-                    return response.ok('success permission store')
+                    return response.send({ status: true, data: request.all(), msg: 'success' })
                 }
                 return response.status(422).send('permission is required')
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -63,10 +61,11 @@ export default class PermissionsController {
         try {
             await bouncer.authorize("read-permission")
             if (await bouncer.allows('read-permission')) {
-                return response.ok(await Permission.find(request.param('id')))
+                const fetch = await Permission.find(request.param('id'))
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -90,11 +89,11 @@ export default class PermissionsController {
                     q.name = request.input('permission')+'-'+validate['name']
                     q.basepermission = validate['name']
                     await q.save()
+                    return response.send({ status: true, data: validate, msg: 'success' })
                 }
-                return response.ok('success permission update')
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -106,10 +105,10 @@ export default class PermissionsController {
                 if (q) {
                     await q.delete()
                 }
-                return response.ok('success permission destroy')
+                return response.send({ status: true, data: {}, msg: 'success' })
             }
         } catch (error) {
-            response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 }

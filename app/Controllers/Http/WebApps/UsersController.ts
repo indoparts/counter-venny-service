@@ -1,42 +1,27 @@
-import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import { UserValidatorStore, UserValidatorUpdate, AvatarValidator, PasswordValidator } from 'App/Validators/UserValidator'
-import Drive from '@ioc:Adonis/Core/Drive'
+import { UnlinkFile, UploadFile } from 'App/helper'
 export default class UsersController {
 
     public async index({ bouncer, response, request }: HttpContextContract) {
         try {
             await bouncer.authorize("read-user")
             if (await bouncer.allows('read-user')) {
-                const input = request.all()
-                if (input['between'] !== '') {
-                    const data = await User.query()
-                        .where(input['sortBy'] !== '' ? input['sortBy'] : input['sortBy'], 'LIKE', '%' + input['search'] + '%')
-                        .whereBetween('created_at', input['between'].split(","))
-                        .orderBy([
-                            {
-                                column: input['sortBy'] !== '' ? input['sortBy'] : 'nik',
-                                order: input['sortDesc'] ? 'desc' : 'asc',
-                            }
-                        ])
-                        .preload('roles').preload('dept').paginate(input['page'], input['limit'])
-                    return response.ok(data)
-                } else {
-                    const data = await User.query()
-                        .where(input['sortBy'] !== '' ? input['sortBy'] : 'nik', 'LIKE', '%' + input['search'] + '%')
-                        .orderBy([
-                            {
-                                column: input['sortBy'] !== '' ? input['sortBy'] : 'nik',
-                                order: input['sortDesc'] ? 'desc' : 'asc',
-                            }
-                        ])
-                        .preload('roles').preload('dept').paginate(input['page'], input['limit'])
-                    return response.ok(data)
-                }
+                const { sortBy,search,sortDesc,page,limit} = request.all()
+                const fetch = await User.query()
+                    .where(sortBy !== '' ? sortBy : sortBy, 'LIKE', '%' + search + '%')
+                    .orderBy([
+                        {
+                            column: sortBy !== '' ? sortBy : 'nik',
+                            order: sortDesc ? 'desc' : 'asc',
+                        }
+                    ])
+                    .preload('roles').preload('dept').paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -45,10 +30,7 @@ export default class UsersController {
             await bouncer.authorize("create-user")
             if (await bouncer.allows('create-user')) {
                 const payload = await request.validate(UserValidatorStore)
-                await payload.avatar.move(Application.tmpPath('uploads/avatar-users'), {
-                    name: `${payload.nik}.jpg`,
-                    overwrite: true,
-                })
+                UploadFile(payload.avatar, payload.nik, 'uploads/avatar-users')
                 const user = new User()
                 user.role_id = payload.role_id
                 user.dept_id = payload.dept_id
@@ -61,11 +43,10 @@ export default class UsersController {
                 user.work_location = payload.work_location
                 user.saldo_cuti = payload.saldo_cuti
                 await user.save()
-                return response.status(200).send('success')
+                return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            // return response.send(error)
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -74,15 +55,14 @@ export default class UsersController {
             await bouncer.authorize("read-user")
             if (await bouncer.allows('read-user')) {
                 const user = await User
-                .query()
+                    .query()
                     .where('id', request.param('id'))
                     .preload('roles')
                     .preload('dept')
-                return response.ok({ user: user })
-
+                return response.send({ status: true, data: user, msg: 'success' })
             }
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -93,12 +73,8 @@ export default class UsersController {
                 const payload = await request.validate(UserValidatorUpdate)
                 if (request.file('avatar') != null) {
                     const payimg = await request.validate(AvatarValidator)
-                    const filePath = Application.tmpPath(`uploads/avatar-users/${user.avatar}`)
-                    await Drive.delete(filePath)
-                    await payimg.avatar.move(Application.tmpPath('uploads/avatar-users'), {
-                        name: `${payload.nik}.jpg`,
-                        overwrite: true,
-                    })
+                    UnlinkFile(user.avatar, 'uploads/avatar-users')
+                    UploadFile(payimg.avatar, payload.nik, 'uploads/avatar-users')
                     user.avatar = payimg.avatar.fileName as string
                 }
                 if (request.input('password') != null) {
@@ -114,10 +90,10 @@ export default class UsersController {
                 user.work_location = payload.work_location
                 user.saldo_cuti = payload.saldo_cuti
                 await user.save()
-                return response.status(200).send("success")
+                return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -126,13 +102,12 @@ export default class UsersController {
             await bouncer.authorize("delete-user")
             if (await bouncer.allows('delete-user')) {
                 const user = await User.findOrFail(request.param('id'))
-                const filePath = Application.tmpPath(`uploads/avatar-users/${user.avatar}`)
-                await Drive.delete(filePath)
+                UnlinkFile(user.avatar, 'uploads/avatar-users')
                 await user.delete()
-                return response.status(200).send('success')
+                return response.send({ status: true, data: {}, msg: 'success' })
             }
         } catch (error) {
-            return response.status(error.status).send(error.messages)
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 }
