@@ -69,6 +69,22 @@ export default class PermissionSeeder extends BaseSeeder {
         name: "delete-dept",
         basepermission: "dept"
       },
+      {
+        name: "create-mastertoko",
+        basepermission: "mastertoko"
+      },
+      {
+        name: "read-mastertoko",
+        basepermission: "mastertoko"
+      },
+      {
+        name: "update-mastertoko",
+        basepermission: "mastertoko"
+      },
+      {
+        name: "delete-mastertoko",
+        basepermission: "mastertoko"
+      },
     ]
     await Permission.createMany(permissionname)
   }

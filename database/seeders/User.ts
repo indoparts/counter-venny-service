@@ -9,13 +9,17 @@ export default class UserSeeder extends BaseSeeder {
         role_id: 1,
         dept_id: 1,
         name: 'Superadmin',
-        email: 'Superadmin@test.test',
+        email: 'superadmin@test.test',
         nik: '001',
         password: '123456',
         avatar: 'testing.png',
         work_location: 'office',
         saldo_cuti: 0,
-        activation: 'true'
+        activation: 'true',
+        hp: '081212439564',
+        status: 'tetap',
+        tgl_join: new Date(),
+        limit_kasbon: 2000000,
       },
     ])
   }

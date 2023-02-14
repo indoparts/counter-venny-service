@@ -42,6 +42,10 @@ export default class UsersController {
                 user.avatar = payload.avatar.fileName as string
                 user.work_location = payload.work_location
                 user.saldo_cuti = payload.saldo_cuti
+                user.hp = payload.hp
+                user.status = payload.status
+                user.tgl_join = new Date()
+                user.limit_kasbon = payload.limit_kasbon
                 await user.save()
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
@@ -89,6 +93,10 @@ export default class UsersController {
                 user.activation = payload.activation
                 user.work_location = payload.work_location
                 user.saldo_cuti = payload.saldo_cuti
+                user.hp = payload.hp
+                user.status = payload.status
+                user.tgl_join = new Date()
+                user.limit_kasbon = payload.limit_kasbon
                 await user.save()
                 return response.send({ status: true, data: payload, msg: 'success' })
             }

@@ -31,73 +31,86 @@ import User from 'App/Models/User';
 | NOTE: Always export the "actions" const from this file
 |****************************************************************
 */
-async function permissionGuard(params:number, name:string) {
-    
-    const arr : number[] = [];
+async function permissionGuard(params: number, name: string) {
+
+    const arr: number[] = [];
     const call = Database
-    .from('permissions')
-    .join('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
-    .join('roles', 'role_has_permissions.role_id', '=', 'roles.id')
-    .where('permissions.name', name)
-    .select('role_has_permissions.role_id');
+        .from('permissions')
+        .join('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+        .join('roles', 'role_has_permissions.role_id', '=', 'roles.id')
+        .where('permissions.name', name)
+        .select('role_has_permissions.role_id');
     (await call).forEach(el => {
         arr.push(el.role_id)
     });
     return arr.includes(params)
 }
 export const { actions } = Bouncer
-// USER AUTHORIZATION
-.define('create-user', (user: User) => {
-    return permissionGuard(user.role_id, 'create-user')
-})
-.define('read-user', (user: User) => {
-    return permissionGuard(user.role_id, 'read-user')
-})
-.define('update-user', (user: User) => {
-    return permissionGuard(user.role_id, 'update-user')
-})
-.define('delete-user', (user: User) => {
-    return permissionGuard(user.role_id, 'delete-user')
-})
-// ROLES AUTHORIZATION
-.define('create-role', (user: User) => {
-    return permissionGuard(user.role_id, 'create-role')
-})
-.define('read-role', (user: User) => {
-    return permissionGuard(user.role_id, 'read-role')
-})
-.define('update-role', (user: User) => {
-    return permissionGuard(user.role_id, 'update-role')
-})
-.define('delete-role', (user: User) => {
-    return permissionGuard(user.role_id, 'delete-role')
-})
-// PERMISSION AUTHORIZATION
-.define('create-permission', (user: User) => {
-    return permissionGuard(user.role_id, 'create-permission')
-})
-.define('read-permission', (user: User) => {
-    return permissionGuard(user.role_id, 'read-permission')
-})
-.define('update-permission', (user: User) => {
-    return permissionGuard(user.role_id, 'update-permission')
-})
-.define('delete-permission', (user: User) => {
-    return permissionGuard(user.role_id, 'delete-permission')
-})
-// DEPT AUTHORIZATION
-.define('create-dept', (user: User) => {
-    return permissionGuard(user.role_id, 'create-dept')
-})
-.define('read-dept', (user: User) => {
-    return permissionGuard(user.role_id, 'read-dept')
-})
-.define('update-dept', (user: User) => {
-    return permissionGuard(user.role_id, 'update-dept')
-})
-.define('delete-dept', (user: User) => {
-    return permissionGuard(user.role_id, 'delete-dept')
-})
+    // USER AUTHORIZATION
+    .define('create-user', (user: User) => {
+        return permissionGuard(user.role_id, 'create-user')
+    })
+    .define('read-user', (user: User) => {
+        return permissionGuard(user.role_id, 'read-user')
+    })
+    .define('update-user', (user: User) => {
+        return permissionGuard(user.role_id, 'update-user')
+    })
+    .define('delete-user', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-user')
+    })
+    // ROLES AUTHORIZATION
+    .define('create-role', (user: User) => {
+        return permissionGuard(user.role_id, 'create-role')
+    })
+    .define('read-role', (user: User) => {
+        return permissionGuard(user.role_id, 'read-role')
+    })
+    .define('update-role', (user: User) => {
+        return permissionGuard(user.role_id, 'update-role')
+    })
+    .define('delete-role', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-role')
+    })
+    // PERMISSION AUTHORIZATION
+    .define('create-permission', (user: User) => {
+        return permissionGuard(user.role_id, 'create-permission')
+    })
+    .define('read-permission', (user: User) => {
+        return permissionGuard(user.role_id, 'read-permission')
+    })
+    .define('update-permission', (user: User) => {
+        return permissionGuard(user.role_id, 'update-permission')
+    })
+    .define('delete-permission', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-permission')
+    })
+    // DEPT AUTHORIZATION
+    .define('create-dept', (user: User) => {
+        return permissionGuard(user.role_id, 'create-dept')
+    })
+    .define('read-dept', (user: User) => {
+        return permissionGuard(user.role_id, 'read-dept')
+    })
+    .define('update-dept', (user: User) => {
+        return permissionGuard(user.role_id, 'update-dept')
+    })
+    .define('delete-dept', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-dept')
+    })
+    // MASTER TOKO AUTHORIZATION
+    .define('create-mastertoko', (user: User) => {
+        return permissionGuard(user.role_id, 'create-mastertoko')
+    })
+    .define('read-mastertoko', (user: User) => {
+        return permissionGuard(user.role_id, 'read-mastertoko')
+    })
+    .define('update-mastertoko', (user: User) => {
+        return permissionGuard(user.role_id, 'update-mastertoko')
+    })
+    .define('delete-mastertoko', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-mastertoko')
+    })
 /*
 |--------------------------------------------------------------------------
 | Bouncer Policies

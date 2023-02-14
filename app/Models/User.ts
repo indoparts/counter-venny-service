@@ -38,6 +38,18 @@ export default class User extends BaseModel {
   @column()
   public saldo_cuti: number
 
+  @column()
+  public hp: string
+
+  @column()
+  public status: string
+  
+  @column()
+  public tgl_join: Date
+
+  @column()
+  public limit_kasbon: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

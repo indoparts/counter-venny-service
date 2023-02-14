@@ -10,7 +10,7 @@ export class UserValidatorStore extends Messages {
     role_id: schema.number(),
     dept_id: schema.number(),
     name: schema.string(),
-    email: schema.string.nullableAndOptional(),
+    email: schema.string(),
     nik: schema.string(),
     password: schema.string([
       rules.minLength(6),
@@ -23,6 +23,13 @@ export class UserValidatorStore extends Messages {
     }),
     work_location: schema.enum(['office', 'gudang', 'toko']),
     saldo_cuti: schema.number(),
+    hp: schema.string([
+      rules.minLength(12),
+      rules.maxLength(13),
+    ]),
+    status: schema.string(),
+    tgl_join: schema.date({ format: 'yyyy-MM-dd' }),
+    limit_kasbon: schema.number(),
   })
 }
 
@@ -39,6 +46,13 @@ export class UserValidatorUpdate extends Messages {
     activation: schema.enum(['true', 'false']),
     work_location: schema.enum(['office', 'gudang', 'toko']),
     saldo_cuti: schema.number(),
+    hp: schema.string([
+      rules.minLength(12),
+      rules.maxLength(13),
+    ]),
+    status: schema.string(),
+    tgl_join: schema.date(),
+    limit_kasbon: schema.number(),
   })
 }
 
