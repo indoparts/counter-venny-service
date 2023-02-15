@@ -9,6 +9,9 @@ export default class extends BaseSchema {
       table.string('nama', 50).notNullable().unique()
       table.text('alamat', 'longtext').notNullable()
       table.string('telepon', 15).notNullable()
+      table.string('latitude').nullable()
+      table.string('longitude').nullable()
+      table.string('radius_forabsen').nullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

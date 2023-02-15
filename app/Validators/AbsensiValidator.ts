@@ -12,6 +12,7 @@ export default class MasterTokoValidator extends Messages{
     longitude: schema.string(),
     status: schema.enum(['telat', 'tidak telat']),
     keterangan_absen: schema.enum(['masuk', 'pulang']),
+    waktu_telat_masuk: schema.string.optional(),
     foto_selfi: schema.file({
       size: '2mb',
       extnames: ['jpg', 'png'],

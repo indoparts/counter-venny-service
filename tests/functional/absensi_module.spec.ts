@@ -28,6 +28,7 @@ test.group('Absensi module', () => {
         longitude: '106.565363,16z',
         status: 'tidak telat',
         keterangan_absen: 'masuk',
+        waktu_telat_masuk: '1 jam',
       })
       .file('foto_selfi', fakeAvatar.contents, { filename: fakeAvatar.name })
       .loginAs(user)
@@ -45,6 +46,7 @@ test.group('Absensi module', () => {
         longitude: '',
         status: '',
         keterangan_absen: '',
+        waktu_telat_masuk: '',
       })
       .file('foto_selfi', '', {})
       .loginAs(user)
@@ -78,6 +80,7 @@ test.group('Absensi module', () => {
         longitude: '106.565363,16z',
         status: 'tidak telat',
         keterangan_absen: 'pulang',
+        waktu_telat_masuk: '1 jam',
       })
       .file('foto_selfi', fakeAvatar.contents, { filename: fakeAvatar.name })
       .loginAs(user)

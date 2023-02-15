@@ -18,6 +18,8 @@ export default class Absensi extends BaseModel {
   @column()
   public status_masuk: string
   @column()
+  public waktu_telat_masuk: string
+  @column()
   public foto_selfi_masuk: string
   @column()
   public latitude_pulang: string

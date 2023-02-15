@@ -23,6 +23,9 @@ test.group('Master Toko module', () => {
         nama: 'TestToko',
         alamat: 'TestToko',
         telepon: '081212123434',
+        latitude: -6.210600831088287,
+        longitude: 106.56538970635356,
+        radius_forabsen: 100,
       })
       .loginAs(user)
     console.log(res.body());
@@ -36,6 +39,9 @@ test.group('Master Toko module', () => {
         nama: '',
         alamat: '',
         telepon: '',
+        latitude: '',
+        longitude: '',
+        radius_forabsen: '',
       })
       .loginAs(user)
     console.log(res.body());
@@ -68,6 +74,9 @@ test.group('Master Toko module', () => {
         nama: 'TestToko',
         alamat: 'TestToko',
         telepon: '081212123434',
+        latitude: -6.210600831088287,
+        longitude: 106.56538970635356,
+        radius_forabsen: 100,
       })
       .loginAs(user)
     console.log(res.body());
@@ -84,6 +93,9 @@ test.group('Master Toko module', () => {
         nama: '',
         alamat: '',
         telepon: '',
+        latitude: '',
+        longitude: '',
+        radius_forabsen: '',
       })
       .loginAs(user)
     console.log(res.body());

@@ -64,36 +64,41 @@ export default class AuthController {
     */
     public async profile({ auth, response }: HttpContextContract) {
         try {
-            const updateUser = await User.findOrFail(auth.user?.id)
-            if (await updateUser.save()) {
-                const arr: string[] = [];
+            const fetch = await User.findOrFail(auth.user?.id)
+            if (await fetch.save()) {
+                const permission: string[] = [];
                 const call = Database
                     .from('role_has_permissions AS rhp')
                     .join('permissions AS p', 'p.id', '=', 'rhp.permission_id')
                     .join('roles AS r', 'rhp.role_id', '=', 'r.id')
                     .join('users AS u', 'u.role_id', '=', 'r.id')
-                    .where('u.id', updateUser.id)
+                    .where('u.id', fetch.id)
                     .select('p.name AS permissionsname');
                 (await call).forEach(el => {
-                    arr.push(el.permissionsname)
+                    permission.push(el.permissionsname)
                 });
-                const rolename = await Role.find(updateUser.role_id)
-                const deptname = await Dept.find(updateUser.dept_id)
+                const rolename = await Role.find(fetch.role_id)
+                const deptname = await Dept.find(fetch.dept_id)
                 const q = {
-                    "id": updateUser.id,
-                    "role_id": updateUser.role_id,
-                    "dept_id": updateUser.dept_id,
+                    "id": fetch.id,
+                    "role_id": fetch.role_id,
+                    "dept_id": fetch.dept_id,
                     "role_name": rolename?.rolename,
                     "dept_name": deptname?.deptname,
-                    "name": updateUser.name,
-                    "email": updateUser.email,
-                    "nik": updateUser.nik,
-                    "activation": updateUser.activation,
-                    "avatar": updateUser.avatar,
-                    "work_location": updateUser.work_location,
-                    "saldo_cuti": updateUser.saldo_cuti,
-                };
-                return response.send({ status: true, data: { user: q, permission: arr }, msg: 'success' })
+                    "name": fetch.name,
+                    "email": fetch.email,
+                    "nik": fetch.nik,
+                    "activation": fetch.activation,
+                    "avatar": fetch.avatar,
+                    "work_location": fetch.work_location,
+                    "saldo_cuti": fetch.saldo_cuti,
+                    "toko": {},
+                }
+                if (fetch.work_location === 'toko') {
+                    const gettoko = await Database.rawQuery(`SELECT mt.* FROM users u JOIN user_tokos ut ON u.id = ut.user_id JOIN master_tokos mt ON ut.master_toko_id = mt.id WHERE u.id = ${auth.user?.id};`)
+                    q["toko"] = gettoko[0][0]
+                }
+                return response.send({ status: true, data: { user: q, permission }, msg: 'success' })
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })

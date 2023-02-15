@@ -11,6 +11,12 @@ export default class MasterToko extends BaseModel {
   public alamat: string
   @column()
   public telepon: string
+  @column()
+  public latitude: string
+  @column()
+  public longitude: string
+  @column()
+  public radius_forabsen: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

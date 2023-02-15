@@ -12,6 +12,7 @@ export default class extends BaseSchema {
       table.string('latitude_masuk').nullable()
       table.string('longitude_masuk').nullable()
       table.enum('status_masuk', ['telat', 'tidak telat']).nullable()
+      table.string('waktu_telat_masuk').nullable()
       table.string('foto_selfi_masuk').nullable()
       table.string('latitude_pulang').nullable()
       table.string('longitude_pulang').nullable()

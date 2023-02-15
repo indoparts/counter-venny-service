@@ -33,6 +33,7 @@ export default class AbsensiController {
                 q.latitude_masuk = payload.latitude
                 q.longitude_masuk = payload.longitude
                 q.status_masuk = payload.status
+                q.waktu_telat_masuk = payload.waktu_telat_masuk!
                 q.foto_selfi_masuk = namafile + '.jpg' as string
                 await q.save()
             }
