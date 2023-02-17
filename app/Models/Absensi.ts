@@ -12,9 +12,9 @@ export default class Absensi extends BaseModel {
   @column()
   public jam_pulang: Date
   @column()
-  public latitude_masuk: string
+  public latitude_masuk: number
   @column()
-  public longitude_masuk: string
+  public longitude_masuk: number
   @column()
   public status_masuk: string
   @column()

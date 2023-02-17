@@ -45,5 +45,6 @@ Route.group(() => {
     Route.resource("role-permission", "WebApps/SetRolePermissionsController",).apiOnly();
     Route.resource("master-toko", "WebApps/MasterTokoController",).apiOnly();
     Route.resource("absensi", "WebApps/AbsensiController",).apiOnly();
+    Route.get("absensi-chart", "WebApps/AbsensiController.chart");
   }).middleware("auth:api");
 }).prefix("api");
