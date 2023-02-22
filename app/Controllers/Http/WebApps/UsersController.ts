@@ -1,4 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Dept from 'App/Models/Dept'
+import MasterToko from 'App/Models/MasterToko'
+import Role from 'App/Models/Role'
 import User from 'App/Models/User'
 import { UserValidatorStore, UserValidatorUpdate, AvatarValidator, PasswordValidator } from 'App/Validators/UserValidator'
 import { UnlinkFile, UploadFile } from 'App/helper'
@@ -8,9 +11,9 @@ export default class UsersController {
         try {
             await bouncer.authorize("read-user")
             if (await bouncer.allows('read-user')) {
-                const { sortBy,search,sortDesc,page,limit} = request.all()
+                const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch = await User.query()
-                    .where(sortBy !== '' ? sortBy : sortBy, 'LIKE', '%' + search + '%')
+                    .where(sortBy !== '' ? sortBy : 'name', 'LIKE', '%' + search + '%')
                     .orderBy([
                         {
                             column: sortBy !== '' ? sortBy : 'nik',
@@ -21,6 +24,8 @@ export default class UsersController {
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -39,17 +44,19 @@ export default class UsersController {
                 user.nik = payload.nik
                 user.password = payload.password
                 user.activation = payload.activation
-                user.avatar = payload.avatar.fileName as string
+                user.avatar = `${payload.nik}.${payload.avatar.extname}`
                 user.work_location = payload.work_location
                 user.saldo_cuti = payload.saldo_cuti
                 user.hp = payload.hp
                 user.status = payload.status
-                user.tgl_join = new Date()
+                user.tgl_join = request.input('tgl_join')
                 user.limit_kasbon = payload.limit_kasbon
                 await user.save()
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -79,7 +86,7 @@ export default class UsersController {
                     const payimg = await request.validate(AvatarValidator)
                     UnlinkFile(user.avatar, 'uploads/avatar-users')
                     UploadFile(payimg.avatar, payload.nik, 'uploads/avatar-users')
-                    user.avatar = payimg.avatar.fileName as string
+                    user.avatar = `${payload.nik}.${payimg.avatar.extname}`
                 }
                 if (request.input('password') != null) {
                     const paypass = await request.validate(PasswordValidator)
@@ -95,12 +102,14 @@ export default class UsersController {
                 user.saldo_cuti = payload.saldo_cuti
                 user.hp = payload.hp
                 user.status = payload.status
-                user.tgl_join = new Date()
+                user.tgl_join = request.input('tgl_join')
                 user.limit_kasbon = payload.limit_kasbon
                 await user.save()
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -114,6 +123,18 @@ export default class UsersController {
                 await user.delete()
                 return response.send({ status: true, data: {}, msg: 'success' })
             }
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+    public async attr_form({ request, response }: HttpContextContract) {
+        try {
+            const roles = await Role.all()
+            const depts = await Dept.all()
+            const toko = await MasterToko.all()
+            return response.send({
+                status: true, data: { roles, depts, toko }, msg: 'success'
+            })
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }

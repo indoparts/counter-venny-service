@@ -73,10 +73,10 @@ export const { actions } = Bouncer
         return permissionGuard(user.role_id, 'delete-role')
     })
     // PERMISSION AUTHORIZATION
-    .define('create-permission', (user: User) => {
+    .define('c', (user: User) => {
         return permissionGuard(user.role_id, 'create-permission')
     })
-    .define('read-permission', (user: User) => {
+    .define('c', (user: User) => {
         return permissionGuard(user.role_id, 'read-permission')
     })
     .define('update-permission', (user: User) => {
@@ -110,6 +110,147 @@ export const { actions } = Bouncer
     })
     .define('delete-mastertoko', (user: User) => {
         return permissionGuard(user.role_id, 'delete-mastertoko')
+    })
+    // MASTER PELANGGAN AUTHORIZATION
+    .define('create-masterpelanggan', (user: User) => {
+        return permissionGuard(user.role_id, 'create-masterpelanggan')
+    })
+    .define('read-masterpelanggan', (user: User) => {
+        return permissionGuard(user.role_id, 'read-masterpelanggan')
+    })
+    .define('update-masterpelanggan', (user: User) => {
+        return permissionGuard(user.role_id, 'update-masterpelanggan')
+    })
+    .define('delete-masterpelanggan', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-masterpelanggan')
+    })
+    // ABSENSI AUTHORIZATION
+    .define('create-absensi', (user: User) => {
+        return permissionGuard(user.role_id, 'create-absensi')
+    })
+    .define('read-absensi', (user: User) => {
+        return permissionGuard(user.role_id, 'read-absensi')
+    })
+    .define('update-absensi', (user: User) => {
+        return permissionGuard(user.role_id, 'update-absensi')
+    })
+    .define('delete-absensi', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-absensi')
+    })
+    .define('report-absensi', (user: User) => {
+        return permissionGuard(user.role_id, 'report-absensi')
+    })
+    // CUTI AUTHORIZATION
+    .define('create-cuti', (user: User) => {
+        return permissionGuard(user.role_id, 'create-cuti')
+    })
+    .define('read-cuti', (user: User) => {
+        return permissionGuard(user.role_id, 'read-cuti')
+    })
+    .define('update-cuti', (user: User) => {
+        return permissionGuard(user.role_id, 'update-cuti')
+    })
+    .define('delete-cuti', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-cuti')
+    })
+    .define('report-cuti', (user: User) => {
+        return permissionGuard(user.role_id, 'report-cuti')
+    })
+    // IZIN SAKIT AUTHORIZATION
+    .define('create-izinsakit', (user: User) => {
+        return permissionGuard(user.role_id, 'create-izinsakit')
+    })
+    .define('read-izinsakit', (user: User) => {
+        return permissionGuard(user.role_id, 'read-izinsakit')
+    })
+    .define('update-izinsakit', (user: User) => {
+        return permissionGuard(user.role_id, 'update-izinsakit')
+    })
+    .define('delete-izinsakit', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-izinsakit')
+    })
+    .define('report-izinsakit', (user: User) => {
+        return permissionGuard(user.role_id, 'report-izinsakit')
+    })
+    // IZIN PRIBADI AUTHORIZATION
+    .define('create-izinpribadi', (user: User) => {
+        return permissionGuard(user.role_id, 'create-izinpribadi')
+    })
+    .define('read-izinpribadi', (user: User) => {
+        return permissionGuard(user.role_id, 'read-izinpribadi')
+    })
+    .define('update-izinpribadi', (user: User) => {
+        return permissionGuard(user.role_id, 'update-izinpribadi')
+    })
+    .define('delete-izinpribadi', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-izinpribadi')
+    })
+    .define('report-izinpribadi', (user: User) => {
+        return permissionGuard(user.role_id, 'report-izinpribadi')
+    })
+    // JADWAL ISTIRAHAT AUTHORIZATION
+    .define('create-jadwalistirahat', (user: User) => {
+        return permissionGuard(user.role_id, 'create-jadwalistirahat')
+    })
+    .define('read-jadwalistirahat', (user: User) => {
+        return permissionGuard(user.role_id, 'read-jadwalistirahat')
+    })
+    .define('update-jadwalistirahat', (user: User) => {
+        return permissionGuard(user.role_id, 'update-jadwalistirahat')
+    })
+    .define('delete-jadwalistirahat', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-jadwalistirahat')
+    })
+    .define('report-jadwalistirahat', (user: User) => {
+        return permissionGuard(user.role_id, 'report-jadwalistirahat')
+    })
+    // JADWAL PIKET AUTHORIZATION
+    .define('create-jadwalpiket', (user: User) => {
+        return permissionGuard(user.role_id, 'create-jadwalpiket')
+    })
+    .define('read-jadwalpiket', (user: User) => {
+        return permissionGuard(user.role_id, 'read-jadwalpiket')
+    })
+    .define('update-jadwalpiket', (user: User) => {
+        return permissionGuard(user.role_id, 'update-jadwalpiket')
+    })
+    .define('delete-jadwalpiket', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-jadwalpiket')
+    })
+    .define('report-jadwalpiket', (user: User) => {
+        return permissionGuard(user.role_id, 'report-jadwalpiket')
+    })
+    // JADWAL GAJI AUTHORIZATION
+    .define('create-gaji', (user: User) => {
+        return permissionGuard(user.role_id, 'create-gaji')
+    })
+    .define('read-gaji', (user: User) => {
+        return permissionGuard(user.role_id, 'read-gaji')
+    })
+    .define('update-gaji', (user: User) => {
+        return permissionGuard(user.role_id, 'update-gaji')
+    })
+    .define('delete-gaji', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-gaji')
+    })
+    .define('report-gaji', (user: User) => {
+        return permissionGuard(user.role_id, 'report-gaji')
+    })
+    // JADWAL KASBON AUTHORIZATION
+    .define('create-kasbon', (user: User) => {
+        return permissionGuard(user.role_id, 'create-kasbon')
+    })
+    .define('read-kasbon', (user: User) => {
+        return permissionGuard(user.role_id, 'read-kasbon')
+    })
+    .define('update-kasbon', (user: User) => {
+        return permissionGuard(user.role_id, 'update-kasbon')
+    })
+    .define('delete-kasbon', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-kasbon')
+    })
+    .define('report-kasbon', (user: User) => {
+        return permissionGuard(user.role_id, 'report-kasbon')
     })
 /*
 |--------------------------------------------------------------------------

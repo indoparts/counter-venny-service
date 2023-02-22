@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, HasOne, belongsTo, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import User from './User'
+import MasterToko from './MasterToko'
 
 export default class Absensi extends BaseModel {
   @column({ isPrimary: true })
@@ -7,6 +9,8 @@ export default class Absensi extends BaseModel {
 
   @column()
   public user_id: number
+  @column()
+  public toko_id: number
   @column()
   public jam_masuk: Date
   @column()
@@ -33,4 +37,13 @@ export default class Absensi extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @hasOne(() => User, {
+    foreignKey: 'id',
+  })
+  public users: HasOne<typeof User>
+  @belongsTo(() => MasterToko, {
+    foreignKey: 'toko_id',
+  })
+  public toko: BelongsTo<typeof MasterToko>
 }

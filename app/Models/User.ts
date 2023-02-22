@@ -3,6 +3,7 @@ import Hash from '@ioc:Adonis/Core/Hash'
 import { column, beforeSave, BaseModel,  belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
 import Dept from './Dept'
+import Absensi from './Absensi'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -69,6 +70,11 @@ export default class User extends BaseModel {
     foreignKey: 'role_id',
   })
   public roles: BelongsTo<typeof Role>
+
+  @belongsTo(() => Absensi, {
+    foreignKey: 'id',
+  })
+  public absensis: BelongsTo<typeof Absensi>
 
   @belongsTo(() => Dept, {
     foreignKey: 'dept_id',

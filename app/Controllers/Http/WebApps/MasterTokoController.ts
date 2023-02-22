@@ -10,7 +10,7 @@ export default class MasterTokoController {
                 const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch =  await MasterToko.query().where('nama', 'LIKE', '%'+search+'%').orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'created_at',
                         order: sortDesc ? 'desc' : 'asc',
                     }
                 ]).paginate(page, limit)

@@ -9,7 +9,7 @@ export default class UserSeeder extends BaseSeeder {
         role_id: 1,
         dept_id: 1,
         name: 'Superadmin',
-        email: 'superadmin@test.test',
+        email: 'superadmin@test.tes',
         nik: '001',
         password: '123456',
         avatar: 'testing.png',

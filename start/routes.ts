@@ -39,12 +39,15 @@ Route.group(() => {
     Route.post("profile-update", "WebApps/AuthController.profileUpdate");
     Route.post("logout", "WebApps/AuthController.logout");
     Route.resource("users", "WebApps/UsersController",).apiOnly();
+    Route.get("attr_form", "WebApps/UsersController.attr_form",);
     Route.resource("role", "WebApps/RolesController",).apiOnly();
     Route.resource("permission", "WebApps/PermissionsController",).apiOnly();
     Route.resource("dept", "WebApps/DeptsController",).apiOnly();
     Route.resource("role-permission", "WebApps/SetRolePermissionsController",).apiOnly();
     Route.resource("master-toko", "WebApps/MasterTokoController",).apiOnly();
     Route.resource("absensi", "WebApps/AbsensiController",).apiOnly();
+    Route.resource("pelanggan", "WebApps/PelangganController",).apiOnly();
     Route.get("absensi-chart", "WebApps/AbsensiController.chart");
+    Route.get("absensi-report", "WebApps/AbsensiController.laporan");
   }).middleware("auth:api");
 }).prefix("api");

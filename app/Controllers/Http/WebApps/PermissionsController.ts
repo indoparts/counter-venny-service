@@ -11,13 +11,15 @@ export default class PermissionsController {
                 const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch = await Permission.query().where('name', 'LIKE', '%'+search+'%').orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'id',
                         order: sortDesc ? 'desc' : 'asc',
                     }
                 ]).paginate(page, limit)
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
