@@ -73,10 +73,10 @@ export const { actions } = Bouncer
         return permissionGuard(user.role_id, 'delete-role')
     })
     // PERMISSION AUTHORIZATION
-    .define('c', (user: User) => {
+    .define('create-permission', (user: User) => {
         return permissionGuard(user.role_id, 'create-permission')
     })
-    .define('c', (user: User) => {
+    .define('read-permission', (user: User) => {
         return permissionGuard(user.role_id, 'read-permission')
     })
     .define('update-permission', (user: User) => {
