@@ -20,6 +20,7 @@ export default class UserSeeder extends BaseSeeder {
         status: 'tetap',
         tgl_join: new Date(),
         limit_kasbon: 2000000,
+        total_gaji_perbulan: 2000000,
       },
     ])
   }

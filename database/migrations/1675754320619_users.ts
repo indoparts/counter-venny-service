@@ -20,6 +20,7 @@ export default class extends BaseSchema {
       table.enum('status', ['tetap', 'training', 'kontrak', 'magang']).notNullable().defaultTo('tetap')
       table.date('tgl_join').nullable()
       table.decimal('limit_kasbon', 12,2).nullable()
+      table.decimal('total_gaji_perbulan', 12,2).nullable()
 
       /**
        * Uses timestampz for PostgreSQL and DATETIME2 for MSSQL

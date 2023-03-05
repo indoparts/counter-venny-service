@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import UserGroup from './UserGroup'
 
 export default class MasterGroup extends BaseModel {
   @column({ isPrimary: true })
@@ -14,4 +15,13 @@ export default class MasterGroup extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @manyToMany(() => UserGroup, {
+    localKey: 'id',
+    pivotForeignKey: 'master_group_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'user_id',
+    pivotTable: 'user_groups',
+  })
+  public permission: ManyToMany<typeof UserGroup>
 }

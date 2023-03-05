@@ -261,6 +261,159 @@ export default class RoleHasPermissionSeeder extends BaseSeeder {
         role_id: 1,
         permission_id: 64
       },
+      {
+        role_id: 1,
+        permission_id: 65
+      },
+      {
+        role_id: 1,
+        permission_id: 66
+      },
+      {
+        role_id: 1,
+        permission_id: 67
+      },
+      {
+        role_id: 1,
+        permission_id: 68
+      },
+      {
+        role_id: 1,
+        permission_id: 69
+      },
+      {
+        role_id: 1,
+        permission_id: 70
+      },
+      {
+        role_id: 1,
+        permission_id: 71
+      },
+      {
+        role_id: 1,
+        permission_id: 72
+      },
+      {
+        role_id: 1,
+        permission_id: 73
+      },
+      {
+        role_id: 1,
+        permission_id: 74
+      },
+      {
+        role_id: 1,
+        permission_id: 75
+      },
+      {
+        role_id: 1,
+        permission_id: 76
+      },
+      {
+        role_id: 1,
+        permission_id: 77
+      },
+      {
+        role_id: 1,
+        permission_id: 78
+      },
+      {
+        role_id: 1,
+        permission_id: 79
+      },
+      {
+        role_id: 1,
+        permission_id: 80
+      },
+      {
+        role_id: 1,
+        permission_id: 81
+      },
+      {
+        role_id: 1,
+        permission_id: 82
+      },
+      {
+        role_id: 1,
+        permission_id: 83
+      },
+      {
+        role_id: 1,
+        permission_id: 84
+      },
+      {
+        role_id: 1,
+        permission_id: 85
+      },
+      {
+        role_id: 1,
+        permission_id: 86
+      },
+      {
+        role_id: 1,
+        permission_id: 87
+      },
+      {
+        role_id: 1,
+        permission_id: 88
+      },
+      {
+        role_id: 1,
+        permission_id: 89
+      },
+      {
+        role_id: 1,
+        permission_id: 90
+      },
+      {
+        role_id: 1,
+        permission_id: 91
+      },
+      {
+        role_id: 1,
+        permission_id: 92
+      },
+      {
+        role_id: 1,
+        permission_id: 93
+      },
+      {
+        role_id: 1,
+        permission_id: 94
+      },
+
+      {
+        role_id: 1,
+        permission_id: 95
+      },
+      {
+        role_id: 1,
+        permission_id: 96
+      },
+      {
+        role_id: 1,
+        permission_id: 97
+      },
+      {
+        role_id: 1,
+        permission_id: 98
+      },
+      {
+        role_id: 1,
+        permission_id: 99
+      },
+      {
+        role_id: 1,
+        permission_id: 100
+      },
+      {
+        role_id: 1,
+        permission_id: 101
+      },
+      {
+        role_id: 1,
+        permission_id: 102
+      },
     ]
     await RoleHasPermission.createMany(data)
   }

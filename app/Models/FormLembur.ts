@@ -6,12 +6,12 @@ export default class FormLembur extends BaseModel {
   public id: number
   @column()
   public user_id: number
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public date: DateTime
   @column()
-  public date: Date
-  @column.dateTime()
-  public waktu_mulai: DateTime
-  @column.dateTime()
-  public waktu_berakhir: DateTime
+  public waktu_mulai: string
+  @column()
+  public waktu_berakhir: string
   @column()
   public uraian_tugas: string
   @column()

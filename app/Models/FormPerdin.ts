@@ -9,10 +9,10 @@ export default class FormPerdin extends BaseModel {
   public user_id:number
   @column()
   public tempat_tujuan:string
-  @column()
-  public tgl_brangkat:Date
-  @column()
-  public tgl_kembali:Date
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public tgl_brangkat: DateTime
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public tgl_kembali: DateTime
   @column()
   public tujuan_perdin:string
   @column()

@@ -30,6 +30,7 @@ export class UserValidatorStore extends Messages {
     status: schema.string(),
     // tgl_join: schema.date({ format: 'yyyy-MM-dd' }),
     limit_kasbon: schema.number(),
+    total_gaji_perbulan: schema.number(),
   })
 }
 
@@ -53,6 +54,7 @@ export class UserValidatorUpdate extends Messages {
     status: schema.string(),
     tgl_join: schema.date(),
     limit_kasbon: schema.number(),
+    total_gaji_perbulan: schema.number(),
   })
 }
 

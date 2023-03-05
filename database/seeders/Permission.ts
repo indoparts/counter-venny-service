@@ -86,6 +86,38 @@ export default class PermissionSeeder extends BaseSeeder {
         basepermission: "mastertoko"
       },
       {
+        name: "create-masteroffice",
+        basepermission: "masteroffice"
+      },
+      {
+        name: "read-masteroffice",
+        basepermission: "masteroffice"
+      },
+      {
+        name: "update-masteroffice",
+        basepermission: "masteroffice"
+      },
+      {
+        name: "delete-masteroffice",
+        basepermission: "masteroffice"
+      },
+      {
+        name: "create-mastergudang",
+        basepermission: "mastergudang"
+      },
+      {
+        name: "read-mastergudang",
+        basepermission: "mastergudang"
+      },
+      {
+        name: "update-mastergudang",
+        basepermission: "mastergudang"
+      },
+      {
+        name: "delete-mastergudang",
+        basepermission: "mastergudang"
+      },
+      {
         name: "create-masterpelanggan",
         basepermission: "masterpelanggan"
       },
@@ -142,44 +174,164 @@ export default class PermissionSeeder extends BaseSeeder {
         basepermission: "cuti"
       },
       {
-        name: "create-izinsakit",
-        basepermission: "izinsakit"
+        name: "create-izin",
+        basepermission: "izin"
       },
       {
-        name: "read-izinsakit",
-        basepermission: "izinsakit"
+        name: "read-izin",
+        basepermission: "izin"
       },
       {
-        name: "update-izinsakit",
-        basepermission: "izinsakit"
+        name: "update-izin",
+        basepermission: "izin"
       },
       {
-        name: "delete-izinsakit",
-        basepermission: "izinsakit"
+        name: "delete-izin",
+        basepermission: "izin"
       },
       {
-        name: "report-izinsakit",
-        basepermission: "izinsakit"
+        name: "report-izin",
+        basepermission: "izin"
       },
       {
-        name: "create-izinpribadi",
-        basepermission: "izinpribadi"
+        name: "create-lembur",
+        basepermission: "lembur"
       },
       {
-        name: "read-izinpribadi",
-        basepermission: "izinpribadi"
+        name: "read-lembur",
+        basepermission: "lembur"
       },
       {
-        name: "update-izinpribadi",
-        basepermission: "izinpribadi"
+        name: "update-lembur",
+        basepermission: "lembur"
       },
       {
-        name: "delete-izinpribadi",
-        basepermission: "izinpribadi"
+        name: "delete-lembur",
+        basepermission: "lembur"
       },
       {
-        name: "report-izinpribadi",
-        basepermission: "izinpribadi"
+        name: "report-lembur",
+        basepermission: "lembur"
+      },
+      {
+        name: "create-perdin",
+        basepermission: "perdin"
+      },
+      {
+        name: "read-perdin",
+        basepermission: "perdin"
+      },
+      {
+        name: "update-perdin",
+        basepermission: "perdin"
+      },
+      {
+        name: "delete-perdin",
+        basepermission: "perdin"
+      },
+      {
+        name: "report-perdin",
+        basepermission: "perdin"
+      },
+      {
+        name: "create-reimburs",
+        basepermission: "reimburs"
+      },
+      {
+        name: "read-reimburs",
+        basepermission: "reimburs"
+      },
+      {
+        name: "update-reimburs",
+        basepermission: "reimburs"
+      },
+      {
+        name: "delete-reimburs",
+        basepermission: "reimburs"
+      },
+      {
+        name: "report-reimburs",
+        basepermission: "reimburs"
+      },
+      {
+        name: "create-jadwalgroup",
+        basepermission: "jadwalgroup"
+      },
+      {
+        name: "read-jadwalgroup",
+        basepermission: "jadwalgroup"
+      },
+      {
+        name: "update-jadwalgroup",
+        basepermission: "jadwalgroup"
+      },
+      {
+        name: "delete-jadwalgroup",
+        basepermission: "jadwalgroup"
+      },
+      {
+        name: "report-jadwalgroup",
+        basepermission: "jadwalgroup"
+      },
+      {
+        name: "create-mastergroup",
+        basepermission: "mastergroup"
+      },
+      {
+        name: "read-mastergroup",
+        basepermission: "mastergroup"
+      },
+      {
+        name: "update-mastergroup",
+        basepermission: "mastergroup"
+      },
+      {
+        name: "delete-mastergroup",
+        basepermission: "mastergroup"
+      },
+      {
+        name: "report-mastergroup",
+        basepermission: "mastergroup"
+      },
+      {
+        name: "create-usergroup",
+        basepermission: "usergroup"
+      },
+      {
+        name: "read-usergroup",
+        basepermission: "usergroup"
+      },
+      {
+        name: "update-usergroup",
+        basepermission: "usergroup"
+      },
+      {
+        name: "delete-usergroup",
+        basepermission: "usergroup"
+      },
+      {
+        name: "report-usergroup",
+        basepermission: "usergroup"
+      },
+      {
+        name: "create-timeconfig",
+        basepermission: "timeconfig"
+      },
+      {
+        name: "read-timeconfig",
+        basepermission: "timeconfig"
+      },
+      {
+        name: "update-timeconfig",
+        basepermission: "timeconfig"
+      },
+      {
+        name: "delete-timeconfig",
+        basepermission: "timeconfig"
+      },
+      {
+        name: "report-timeconfig",
+        basepermission: "timeconfig"
       },
       {
         name: "create-jadwalistirahat",
@@ -262,6 +414,8 @@ export default class PermissionSeeder extends BaseSeeder {
         basepermission: "kasbon"
       },
     ]
+    // console.log(permissionname.length);
+    
     await Permission.createMany(permissionname)
   }
 }

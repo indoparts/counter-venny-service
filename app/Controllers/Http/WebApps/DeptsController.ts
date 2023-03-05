@@ -10,13 +10,15 @@ export default class DeptsController {
                 const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch =  await Dept.query().where('deptname', 'LIKE', '%'+search+'%').orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'created_at',
                         order: sortDesc ? 'desc' : 'asc',
                     }
                 ]).paginate(page, limit)
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }

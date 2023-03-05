@@ -14,6 +14,25 @@ export async function UnlinkFile(namefile, pathtarget) {
 export function DateTimeFormated(format, date) {
     return moment(date).format(format)
 }
+export function uniqueString(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
+}
+export function uniqueDatime(xDate) {
+    return xDate.getFullYear().toString(10).substring(2)
+        + (xDate.getMonth() + 1).toString(10).padStart(2, '0')
+        + xDate.getDate().toString(10).padStart(2, '0')
+        + xDate.getHours().toString(10).padStart(2, '0')
+        + xDate.getMinutes().toString(10).padStart(2, '0')
+        + xDate.getSeconds().toString(10).padStart(2, '0')
+}
 export function arrayUnique(array) {
     var a = array.concat();
     for (var i = 0; i < a.length; ++i) {

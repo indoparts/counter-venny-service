@@ -1,9 +1,13 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel,  belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel,  belongsTo, BelongsTo, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
 import Dept from './Dept'
 import Absensi from './Absensi'
+import UserGroup from './UserGroup'
+import UserGudang from './UserGudang'
+import UserOffice from './UserOffice'
+import MasterToko from './MasterToko'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -50,6 +54,8 @@ export default class User extends BaseModel {
 
   @column()
   public limit_kasbon: number
+  @column()
+  public total_gaji_perbulan: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -80,4 +86,22 @@ export default class User extends BaseModel {
     foreignKey: 'dept_id',
   })
   public dept: BelongsTo<typeof Dept>
+
+  @manyToMany(() => UserGroup, {
+    pivotTable: 'user_groups',
+  })
+  public user_groups: ManyToMany<typeof UserGroup>
+
+  @manyToMany(() => UserGudang, {
+    pivotTable: 'user_gudangs',
+  })
+  public user_gudang: ManyToMany<typeof UserGudang>
+  @manyToMany(() => UserOffice, {
+    pivotTable: 'user_tokos',
+  })
+  public user_office: ManyToMany<typeof UserOffice>
+  @manyToMany(() => MasterToko, {
+    pivotTable: 'user_tokos',
+  })
+  public user_toko: ManyToMany<typeof MasterToko>
 }

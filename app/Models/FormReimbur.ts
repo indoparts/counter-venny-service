@@ -6,8 +6,8 @@ export default class FormReimbur extends BaseModel {
   public id: number
   @column()
   public user_id: number
-  @column()
-  public date: Date
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public date: DateTime
   @column()
   public category: string
   @column()

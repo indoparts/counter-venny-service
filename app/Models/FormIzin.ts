@@ -11,10 +11,10 @@ export default class FormIzin extends BaseModel {
   public permit_req:string
   @column()
   public req_type:string
-  @column()
-  public date:Date
-  @column()
-  public todate:Date
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public date: DateTime
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public todate: DateTime
   @column()
   public leave_duration:number
   @column()

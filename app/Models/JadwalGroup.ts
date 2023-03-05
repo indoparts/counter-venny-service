@@ -8,8 +8,8 @@ export default class JadwalGroup extends BaseModel {
   public master_group_id: number
   @column()
   public time_config_id: number
-  @column()
-  public date: Date
+  @column.dateTime({ autoCreate: false, autoUpdate: false })
+  public date: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

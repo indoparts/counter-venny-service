@@ -1,8 +1,14 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database'
 import Dept from 'App/Models/Dept'
+import MasterGudang from 'App/Models/MasterGudang'
+import MasterOffice from 'App/Models/MasterOffice'
 import MasterToko from 'App/Models/MasterToko'
 import Role from 'App/Models/Role'
 import User from 'App/Models/User'
+import UserGudang from 'App/Models/UserGudang'
+import UserOffice from 'App/Models/UserOffice'
+import UserToko from 'App/Models/UserToko'
 import { UserValidatorStore, UserValidatorUpdate, AvatarValidator, PasswordValidator } from 'App/Validators/UserValidator'
 import { UnlinkFile, UploadFile } from 'App/helper'
 export default class UsersController {
@@ -51,7 +57,32 @@ export default class UsersController {
                 user.status = payload.status
                 user.tgl_join = request.input('tgl_join')
                 user.limit_kasbon = payload.limit_kasbon
-                await user.save()
+                user.total_gaji_perbulan = payload.total_gaji_perbulan
+                if (await user.save()) {
+                    switch (payload.work_location) {
+                        case 'gudang':
+                            await UserGudang.updateOrCreate({
+                                user_id: request.param('id')
+                            }, {
+                                master_gudang_id: parseInt(request.input('work_location_master'))
+                            })
+                            break;
+                        case 'office':
+                            await UserOffice.updateOrCreate({
+                                user_id: request.param('id')
+                            }, {
+                                master_office_id: parseInt(request.input('work_location_master'))
+                            })
+                            break;
+                        case 'toko':
+                            await UserToko.updateOrCreate({
+                                user_id: request.param('id')
+                            }, {
+                                master_toko_id: parseInt(request.input('work_location_master'))
+                            })
+                            break;
+                    }
+                }
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -70,10 +101,32 @@ export default class UsersController {
                     .where('id', request.param('id'))
                     .preload('roles')
                     .preload('dept')
+
+                if (user[0].work_location === 'office') {
+                    const q = await Database
+                        .from('users as u')
+                        .join('user_offices as uo', 'u.id', '=', 'uo.user_id')
+                        .select('uo.master_office_id')
+                    user.push((typeof q[0] !== 'undefined') ? q[0].master_office_id : 0)
+                } else if (user[0].work_location === 'gudang') {
+                    const q = await Database
+                        .from('users as u')
+                        .join('user_gudangs as ug', 'u.id', '=', 'ug.user_id')
+                        .select('ug.master_gudang_id')
+                    user.push((typeof q[0] !== 'undefined') ? q[0].master_gudang_id : 0)
+                } else if (user[0].work_location === 'toko') {
+                    const q = await Database
+                        .from('users as u')
+                        .join('user_tokos as ut', 'u.id', '=', 'ut.user_id')
+                        .select('ut.master_toko_id')
+                    user.push((typeof q[0] !== 'undefined') ? q[0].master_toko_id : 0)
+                }
                 return response.send({ status: true, data: user, msg: 'success' })
             }
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            console.log(error);
+
+            // return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -104,7 +157,32 @@ export default class UsersController {
                 user.status = payload.status
                 user.tgl_join = request.input('tgl_join')
                 user.limit_kasbon = payload.limit_kasbon
-                await user.save()
+                user.total_gaji_perbulan = payload.total_gaji_perbulan
+                if (await user.save()) {
+                    switch (payload.work_location) {
+                        case 'gudang':
+                            await UserGudang.updateOrCreate({
+                                user_id: request.param('id')
+                            }, {
+                                master_gudang_id: parseInt(request.input('work_location_master'))
+                            })
+                            break;
+                        case 'office':
+                            await UserOffice.updateOrCreate({
+                                user_id: request.param('id')
+                            }, {
+                                master_office_id: parseInt(request.input('work_location_master'))
+                            })
+                            break;
+                        case 'toko':
+                            await UserToko.updateOrCreate({
+                                user_id: request.param('id')
+                            }, {
+                                master_toko_id: parseInt(request.input('work_location_master'))
+                            })
+                            break;
+                    }
+                }
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -127,15 +205,61 @@ export default class UsersController {
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
-    public async attr_form({ request, response }: HttpContextContract) {
+    public async attr_form({ response }: HttpContextContract) {
         try {
             const roles = await Role.all()
             const depts = await Dept.all()
             const toko = await MasterToko.all()
+            const office = await MasterOffice.all()
+            const gudang = await MasterGudang.all()
             return response.send({
-                status: true, data: { roles, depts, toko }, msg: 'success'
+                status: true, data: { roles, depts, toko, office, gudang }, msg: 'success'
             })
         } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+    public async user_approval({ response, auth }: HttpContextContract) {
+        try {
+            switch (auth.user?.work_location) {
+                case 'office':
+                    const q1 = await Database.rawQuery('select mo.id from user_offices as uo join master_offices as mo on uo.master_office_id=mo.id where uo.user_id=?',[auth.user?.id!])
+                    const res1 = Database
+                        .from('user_offices')
+                        .join('users', 'user_offices.id', '=', 'users.id')
+                        .where('user_offices.master_office.id', q1[0][0].id)
+
+                    console.log(res1);
+                        
+                    return response.send({
+                        status: true, data: res1, msg: 'success'
+                    })
+                case 'gudang':
+                    const q2 = await Database.rawQuery('select mo.id from user_gudangs as uo join master_gudangs as mo on uo.master_gudang_id=mo.id where uo.user_id=?', [auth.user?.id!])
+                    const res2= Database
+                        .from('user_gudangs')
+                        .join('users', 'user_gudangs.id', '=', 'users.id')
+                        .where('user_gudangs.master_gudang_id', q2[0][0].id)
+                    return response.send({
+                        status: true, data: res2, msg: 'success'
+                    })
+                case 'toko':
+                    const q3 = await Database.rawQuery('select mo.id from user_tokos as uo join master_tokos as mo on uo.master_toko_id=mo.id where uo.user_id=?', [auth.user?.id!])
+                    const res3= Database
+                        .from('user_tokos')
+                        .join('users', 'user_tokos.id', '=', 'users.id')
+                        .where('user_tokos.master_toko_id', q3[0][0].id)
+                    return response.send({
+                        status: true, data: res3, msg: 'success'
+                    })
+                default:
+                    return response.send({
+                        status: true, data: [], msg: 'success'
+                    })
+            }
+        } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }

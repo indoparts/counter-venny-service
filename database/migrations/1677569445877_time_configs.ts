@@ -7,8 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.enum('type', ['shift-1', 'shift-2', 'shift-3', 'nonshift']).notNullable()
-      table.string('jam_mulai').notNullable()
-      table.string('jam_berakhir').notNullable()
+      table.time('jam_mulai').notNullable()
+      table.time('jam_berakhir').notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

@@ -96,11 +96,19 @@ export default class AuthController {
                     'limit_kasbon': fetch.limit_kasbon,
                     "role_name": rolename?.rolename,
                     "dept_name": deptname?.deptname,
-                    "toko": {},
+                    "work_location_detail": {},
                 }
                 if (fetch.work_location === 'toko') {
-                    const gettoko = await Database.rawQuery(`SELECT mt.* FROM users u JOIN user_tokos ut ON u.id = ut.user_id JOIN master_tokos mt ON ut.master_toko_id = mt.id WHERE u.id = ${auth.user?.id};`)
-                    q["toko"] = gettoko[0][0]
+                    const x = await Database.rawQuery(`SELECT mt.* FROM users u JOIN user_tokos ut ON u.id = ut.user_id JOIN master_tokos mt ON ut.master_toko_id = mt.id WHERE u.id = ${auth.user?.id};`)
+                    q["work_location_detail"] = x[0][0]
+                }
+                if (fetch.work_location === 'office') {
+                    const x = await Database.rawQuery(`SELECT mo.* FROM users u JOIN user_offices uo ON u.id = uo.user_id JOIN master_offices mo ON uo.master_office_id = mo.id WHERE u.id = ${auth.user?.id};`)
+                    q["work_location_detail"] = x[0][0]
+                }
+                if (fetch.work_location === 'gudang') {
+                    const x = await Database.rawQuery(`SELECT mg.* FROM users u JOIN user_gudangs ug ON u.id = ug.user_id JOIN master_gudangs mg ON ug.master_gudang_id = mg.id WHERE u.id = ${auth.user?.id};`)
+                    q["work_location_detail"] = x[0][0]
                 }
                 return response.send({ status: true, data: { user: q, permission }, msg: 'success' })
             }
