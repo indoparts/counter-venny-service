@@ -96,10 +96,12 @@ export default class User extends BaseModel {
     pivotTable: 'user_gudangs',
   })
   public user_gudang: ManyToMany<typeof UserGudang>
+
   @manyToMany(() => UserOffice, {
-    pivotTable: 'user_tokos',
+    pivotTable: 'user_offices',
   })
   public user_office: ManyToMany<typeof UserOffice>
+
   @manyToMany(() => MasterToko, {
     pivotTable: 'user_tokos',
   })

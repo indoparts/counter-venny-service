@@ -8,15 +8,6 @@ export default class DeptSeeder extends BaseSeeder {
         deptname: 'FINANCE'
       },
       {
-        deptname: 'TOKO A'
-      },
-      {
-        deptname: 'TOKO B'
-      },
-      {
-        deptname: 'TOKO C'
-      },
-      {
         deptname: 'PURCHASING'
       },
       {

@@ -8,7 +8,7 @@ export default class IzinValidator extends Messages {
   }
   public schema = schema.create({
     user_id: schema.number(),
-    permit_req: schema.enum(['come-to-late', 'sick', 'not-present', 'other']),
+    permit_req: schema.enum(['come to late', 'sick', 'not present', 'other']),
     req_type: schema.enum(['once', 'range']),
     date: schema.date({ format: 'sql' }),
     todate: schema.date({ format: 'sql' }),

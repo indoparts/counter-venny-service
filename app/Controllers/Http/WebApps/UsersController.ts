@@ -223,43 +223,34 @@ export default class UsersController {
         try {
             switch (auth.user?.work_location) {
                 case 'office':
-                    const q1 = await Database.rawQuery('select mo.id from user_offices as uo join master_offices as mo on uo.master_office_id=mo.id where uo.user_id=?',[auth.user?.id!])
-                    const res1 = Database
-                        .from('user_offices')
-                        .join('users', 'user_offices.id', '=', 'users.id')
-                        .where('user_offices.master_office.id', q1[0][0].id)
-
-                    console.log(res1);
-                        
+                    const uo = await UserOffice
+                        .query()
+                        .preload('user')
                     return response.send({
-                        status: true, data: res1, msg: 'success'
+                        status: true, data: uo, auth: auth.user, msg: 'success'
                     })
                 case 'gudang':
-                    const q2 = await Database.rawQuery('select mo.id from user_gudangs as uo join master_gudangs as mo on uo.master_gudang_id=mo.id where uo.user_id=?', [auth.user?.id!])
-                    const res2= Database
-                        .from('user_gudangs')
-                        .join('users', 'user_gudangs.id', '=', 'users.id')
-                        .where('user_gudangs.master_gudang_id', q2[0][0].id)
+                    const ug = await UserGudang
+                        .query()
+                        .preload('user')
                     return response.send({
-                        status: true, data: res2, msg: 'success'
+                        status: true, data: ug, auth: auth.user, msg: 'success'
                     })
                 case 'toko':
-                    const q3 = await Database.rawQuery('select mo.id from user_tokos as uo join master_tokos as mo on uo.master_toko_id=mo.id where uo.user_id=?', [auth.user?.id!])
-                    const res3= Database
-                        .from('user_tokos')
-                        .join('users', 'user_tokos.id', '=', 'users.id')
-                        .where('user_tokos.master_toko_id', q3[0][0].id)
+                    const ut = await UserToko
+                        .query()
+                        .preload('user')
                     return response.send({
-                        status: true, data: res3, msg: 'success'
+                        status: true, data: ut, auth: auth.user, msg: 'success'
                     })
                 default:
                     return response.send({
-                        status: true, data: [], msg: 'success'
+                        status: true, data: [], auth: auth.user, msg: 'success'
                     })
             }
         } catch (error) {
             console.log(error);
-            
+
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }

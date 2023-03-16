@@ -52,8 +52,12 @@ Route.group(() => {
     Route.resource("pelanggan", "WebApps/PelangganController").apiOnly();
     Route.resource("form-cuti", "WebApps/Form/CutisController").apiOnly();
     Route.put("form-cuti/approval/:id", "WebApps/Form/CutisController.approval");
+    Route.get("report-cuti", "WebApps/Form/CutisController.report");
+    Route.get("report-cuti-export", "WebApps/Form/CutisController.exportreport");
     Route.resource("form-izin", "WebApps/Form/IzinsController").apiOnly();
     Route.put("form-izin/approval/:id", "WebApps/Form/IzinsController.approval");
+    Route.get("report-izin", "WebApps/Form/IzinsController.report");
+    Route.get("report-izin-export", "WebApps/Form/IzinsController.exportreport");
     Route.resource("form-lembur", "WebApps/Form/LembursController").apiOnly();
     Route.put("form-lembur/approval/:id", "WebApps/Form/LembursController.approval");
     Route.resource("form-perdin", "WebApps/Form/PerdinsController").apiOnly();
@@ -64,6 +68,15 @@ Route.group(() => {
     Route.resource("master-group", "WebApps/Form/MasterGroupsController").apiOnly();
     Route.resource("user-group", "WebApps/Form/UserGroupsController").apiOnly();
     Route.resource("time-config", "WebApps/Form/TimeConfigsController").apiOnly();
+    Route.resource("jadwal-istirahat", "WebApps/JadwalIstirahatsController").apiOnly();
+    Route.get("jadwal-istirahat-attr-form", "WebApps/JadwalIstirahatsController.attr_form");
+    Route.get("report-jadwal-istirahat", "WebApps/JadwalIstirahatsController.report");
+    Route.get("report-jadwal-istirahat-export", "WebApps/JadwalIstirahatsController.exportreport");
+    Route.resource("master-piket", "WebApps/MasterPiketsController").apiOnly();
+    Route.resource("jadwal-piket", "WebApps/UserPiketsController").apiOnly();
+    Route.get("jadwal-piket-attr-form", "WebApps/UserPiketsController.attr_form");
+    Route.get("report-jadwal-piket", "WebApps/UserPiketsController.report");
+    Route.get("report-jadwal-piket-export", "WebApps/UserPiketsController.exportreport");
 
     Route.get("absensi-chart", "WebApps/AbsensiController.chart");
     Route.get("absensi-report", "WebApps/AbsensiController.laporan");

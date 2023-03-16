@@ -8,16 +8,70 @@ export default class CutisController {
         try {
             await bouncer.authorize("read-cuti")
             if (await bouncer.allows('read-cuti')) {
-                const { sortBy, search, sortDesc, page, limit } = request.all()
-                const fetch = await FormCuti.query().where('user_id', 'LIKE', '%' + search + '%').orderBy([
+                const { sortBy, sortDesc, page, limit, search } = request.all()
+                const fetch = await FormCuti.query().orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy === '' ? 'created_at' : sortBy,
                         order: sortDesc ? 'desc' : 'asc',
                     }
-                ]).paginate(page, limit)
+                ])
+                .where('user_id', 'LIKE', '%' + search + '%')
+                .preload('user')
+                .preload('userapproval')
+                .paginate(page, limit)
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+            
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+
+    public async report({ bouncer, response, request }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-cuti")
+            if (await bouncer.allows('read-cuti')) {
+                const { sortBy, sortDesc, page, limit, search, daterange } = request.all()
+                const fetch = await FormCuti.query().orderBy([
+                    {
+                        column: sortBy === '' ? 'created_at' : sortBy,
+                        order: sortDesc ? 'desc' : 'asc',
+                    }
+                ])
+                .where('user_id', 'LIKE', '%' + search + '%')
+                .whereBetween('date', daterange.split(","))
+                .preload('user')
+                .preload('userapproval')
+                .paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            console.log(error);
+            
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+    
+    public async exportreport({ bouncer, response, request }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-cuti")
+            if (await bouncer.allows('read-cuti')) {
+                const { daterange } = request.all()
+                const fetch = await FormCuti.query().orderBy([
+                    {
+                        column: 'created_at',
+                        order: 'asc',
+                    }
+                ])
+                .whereBetween('date', daterange.split(","))
+                .preload('user')
+                .preload('userapproval')
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -83,7 +137,7 @@ export default class CutisController {
             if (await bouncer.allows('read-cuti')) {
                 const q = await FormCuti.findOrFail(request.param('id'))
                 if (auth.user?.id === q.user_id_approval) {
-                    q.status_approval = 'y'
+                    q.status_approval = request.input('status_approval')
                     await q.save()
                     return response.send({ status: true, data: {}, msg: 'success' })
                 }
