@@ -3,7 +3,7 @@ import Drive from '@ioc:Adonis/Core/Drive'
 import moment from 'moment'
 export async function UploadFile(file, namefile, pathtarget) {
     return await file.move(Application.tmpPath(pathtarget), {
-        name: `${namefile}.jpg`,
+        name: `${namefile}.${file.extname}`,
         overwrite: true,
     })
 }

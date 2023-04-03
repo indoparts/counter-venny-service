@@ -12,7 +12,7 @@ export default class CutiValidator extends Messages {
     remaining: schema.number(),
     leave_req: schema.string(),
     req_type: schema.enum(['once', 'range'] as const),
-    date: schema.date({ format: 'sql' }, [rules.after(7, 'days')]),
+    date: schema.date({ format: 'sql' }),
     todate: schema.date({ format: 'sql' }),
     leave_duration: schema.number(),
     notes: schema.string(),

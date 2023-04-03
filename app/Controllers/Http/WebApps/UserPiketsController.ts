@@ -121,4 +121,32 @@ export default class UserPiketsController {
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
+    public async show({ bouncer, request, response }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-jadwalpiket")
+            if (await bouncer.allows('read-jadwalpiket')) {
+                const fetch = await UserPiket.query()
+                .where('id', request.param('id'))
+                .preload('masterPiket')
+                .preload('user')
+                .preload('role')
+                .preload('dept')
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+    public async destroy({ bouncer, request, response }: HttpContextContract) {
+        try {
+            await bouncer.authorize("delete-jadwalpiket")
+            if (await bouncer.allows('delete-jadwalpiket')) {
+                const x = await UserPiket.findOrFail(request.param('id'))
+                await x.delete()
+                return response.send({ status: true, data: {}, msg: 'success' })
+            }
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
 }

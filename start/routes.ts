@@ -80,5 +80,15 @@ Route.group(() => {
 
     Route.get("absensi-chart", "WebApps/AbsensiController.chart");
     Route.get("absensi-report", "WebApps/AbsensiController.laporan");
+
+    Route.resource("variable-gaji", "WebApps/VariableGajisController").apiOnly();
+    Route.resource("formula-gaji", "WebApps/FormulaGajisController").apiOnly();
   }).middleware("auth:api");
 }).prefix("api");
+
+Route.group(() => {
+  Route.group(() => {
+    Route.resource("piket-istirahat", "WebApps/Notification/PiketIstirahatsController").apiOnly();
+    Route.resource("info", "WebApps/Notification/InfoController").apiOnly();
+  }).middleware("auth:api");
+}).prefix("fetch-notification");
