@@ -79,9 +79,15 @@ export default class TimeConfigsController {
     }
     public async jadwal_user({ response, auth }: HttpContextContract) {
         try {
-            const findUser = await UserGroup.query().where('user_id', auth.user?.id!)
-            const jadwal = await JadwalGroup.query().where('master_group_id', findUser[0].master_group_id).preload('time_config').preload('master_group')
-            return response.send({ status: true, data: jadwal, msg: 'success' })
+            const findUser = await UserGroup.query().where('user_id', auth.user?.id!).first()
+            if (findUser) {
+                const jadwal = await JadwalGroup.query()
+                    .where('master_group_id', findUser[0].master_group_id)
+                    .preload('time_config')
+                    .preload('master_group')
+                return response.send({ status: true, data: jadwal, msg: 'success' })
+            }
+            return response.status(404).send({ status: false, data: null, msg: 'data not found' })
         } catch (error) {
             console.log(error);
             
