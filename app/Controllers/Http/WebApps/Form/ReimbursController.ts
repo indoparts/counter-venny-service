@@ -1,7 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import FormReimbur from 'App/Models/FormReimbur'
-import ReimbursValidator from 'App/Validators/ReimbursValidator'
-import { UnlinkFile, UploadFile, uniqueDatime, uniqueString } from 'App/helper'
+import Ws from 'App/Services/Ws'
+import { ReimbursUpdateValidator, ReimbursValidator } from 'App/Validators/ReimbursValidator'
+import { UnlinkFile, UploadFile, uniqueDatime } from 'App/helper'
 
 export default class ReimbursController {
     public async index({ bouncer, response, request }: HttpContextContract) {
@@ -11,10 +12,57 @@ export default class ReimbursController {
                 const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch = await FormReimbur.query().where('user_id', 'LIKE', '%' + search + '%').orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'user_id',
                         order: sortDesc ? 'desc' : 'asc',
                     }
-                ]).paginate(page, limit)
+                ])
+                    .preload('user')
+                    .preload('userapproval')
+                    .paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+
+    public async report({ bouncer, response, request }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-izin")
+            if (await bouncer.allows('read-izin')) {
+                const { sortBy, sortDesc, page, limit, search, daterange } = request.all()
+                const fetch = await FormReimbur.query().orderBy([
+                    {
+                        column: sortBy === '' ? 'created_at' : sortBy,
+                        order: sortDesc ? 'desc' : 'asc',
+                    }
+                ])
+                    .where('user_id', 'LIKE', '%' + search + '%')
+                    .whereBetween('date', daterange.split(","))
+                    .preload('user')
+                    .preload('userapproval')
+                    .paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+
+    public async exportreport({ bouncer, response, request }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-izin")
+            if (await bouncer.allows('read-izin')) {
+                const { daterange } = request.all()
+                const fetch = await FormReimbur.query().orderBy([
+                    {
+                        column: 'created_at',
+                        order: 'asc',
+                    }
+                ])
+                    .whereBetween('date', daterange.split(","))
+                    .preload('user')
+                    .preload('userapproval')
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
@@ -40,10 +88,10 @@ export default class ReimbursController {
                 q.user_id_approval = payload.user_id_approval
                 q.status_approval = payload.status_approval
                 await q.save()
+                Ws.io.emit('notif-info:pengajuan-reimburs', { payload })
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            console.log(error);
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -64,7 +112,7 @@ export default class ReimbursController {
         try {
             await bouncer.authorize("update-reimburs")
             if (await bouncer.allows('update-reimburs')) {
-                const payload = await request.validate(ReimbursValidator)
+                const payload = await request.validate(ReimbursUpdateValidator)
                 const q = await FormReimbur.findOrFail(request.param('id'))
                 let unique = auth.user?.nik + '-' + auth.user?.name + '-' + uniqueDatime(new Date())
                 if (payload.file_receipt != null) {
@@ -108,6 +156,7 @@ export default class ReimbursController {
                 if (auth.user?.id === q.user_id_approval) {
                     q.status_approval = 'y'
                     await q.save()
+                    Ws.io.emit('notif-info:approval-reimburs', { q })
                     return response.send({ status: true, data: {}, msg: 'success' })
                 }
                 return response.send({ status: false, data: { msg: 'approval not valid!' }, msg: 'error' })

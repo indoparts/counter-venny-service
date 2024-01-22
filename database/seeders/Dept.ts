@@ -5,16 +5,19 @@ export default class DeptSeeder extends BaseSeeder {
   public async run () {
     await Dept.createMany([
       {
-        deptname: 'FINANCE'
+        deptname: 'GENERAL'
       },
       {
-        deptname: 'PURCHASING'
+        deptname: 'fINANCE'
+      },
+      {
+        deptname: 'GUDANG'
       },
       {
         deptname: 'MARKETING'
       },
       {
-        deptname: 'LOGISTIK'
+        deptname: 'STORE'
       },
       {
         deptname: 'OWNER'

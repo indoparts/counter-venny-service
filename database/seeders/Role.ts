@@ -9,22 +9,46 @@ export default class RoleSeeder extends BaseSeeder {
         rolename: 'Superadmin'
       },
       {
-        rolename: 'Direktur'
+        rolename: 'Direktur Utama'
       },
       {
-        rolename: 'Manager'
+        rolename: 'Direktur Finance'
       },
       {
-        rolename: 'Ass Manager'
+        rolename: 'Direktur Operasional'
       },
       {
-        rolename: 'Supervisor'
+        rolename: 'Staff Finance'
       },
       {
-        rolename: 'Staff'
+        rolename: 'Staff Gudang'
       },
       {
-        rolename: 'Purchasing'
+        rolename: 'Kepala Gudang'
+      },
+      {
+        rolename: 'Wakil Kepala Gudang'
+      },
+      {
+        rolename: 'Logistik Gudang'
+      },
+      {
+        rolename: 'Helper Gudang'
+      },
+      {
+        rolename: 'Kurir Gudang'
+      },
+      {
+        rolename: 'Kepala Toko'
+      },
+      {
+        rolename: 'Wakil Kepala Toko'
+      },
+      {
+        rolename: 'Kasir Toko'
+      },
+      {
+        rolename: 'Sales Toko'
       },
     ])
   }

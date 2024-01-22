@@ -19,7 +19,9 @@ export default class UserGroupsController {
                             order: sortDesc ? 'desc' : 'asc',
                         }
                     ]).paginate(page, limit)
-                return response.send({ status: true, data: fetch, msg: 'success' })
+                const user = await User.all()
+                const allgroup = await MasterGroup.all()
+                return response.send({ status: true, data: { datatable: fetch, user, allgroup }, msg: 'success' })
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
@@ -31,15 +33,17 @@ export default class UserGroupsController {
             await bouncer.authorize("create-usergroup")
             if (await bouncer.allows('create-usergroup')) {
                 const payload = await request.validate(UserGroupValidator)
-                const arrname = [] as any;
-                const fetch = payload.user_id
-                for (let i = 0; i < fetch.length; i++) {
-                    arrname.push({
-                        master_group_id: payload.master_group_id,
-                        user_id: fetch[i]
-                    })
-                }
-                await UserGroup.updateOrCreateMany(['master_group_id', 'user_id'], arrname)
+                // const arrname = [] as any;
+                // const fetch = payload.user_id
+                // for (let i = 0; i < fetch.length; i++) {
+                //     arrname.push({
+                //         master_group_id: payload.master_group_id,
+                //         user_id: fetch[i]
+                //     })
+                // }
+                // await UserGroup.updateOrCreateMany(['master_group_id', 'user_id'], arrname)
+                const find = await MasterGroup.findOrFail(payload.master_group_id)
+                await find.related('permission').sync(payload.user_id)
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -54,7 +58,8 @@ export default class UserGroupsController {
                 const master_group = await MasterGroup.all()
                 const user = await User.all()
                 return response.send({
-                    status: true, data: { master_group, user }, msg: 'success' })
+                    status: true, data: { master_group, user }, msg: 'success'
+                })
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
@@ -87,21 +92,6 @@ export default class UserGroupsController {
                 }
                 await (await MasterGroup.findOrFail(payload.master_group_id)).related('permission').sync(arrname)
                 return response.send({ status: true, data: payload, msg: 'success' })
-            }
-        } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
-        }
-    }
-
-    public async destroy({ bouncer, request, response }: HttpContextContract) {
-        try {
-            await bouncer.authorize("delete-usergroup")
-            if (await bouncer.allows('delete-usergroup')) {
-                const q = await UserGroup.find(request.param('id'))
-                if (q) {
-                    await q.delete()
-                }
-                return response.send({ status: true, data: {}, msg: 'success' })
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })

@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import FormIzin from 'App/Models/FormIzin'
+import Ws from 'App/Services/Ws'
 import IzinValidator, { FileValidator } from 'App/Validators/IzinValidator'
 import { UnlinkFile, UploadFile, uniqueString } from 'App/helper'
 
@@ -89,6 +90,7 @@ export default class IzinsController {
                 }
                 q.merge(payload)
                 await q.save()
+                Ws.io.emit('notif-info:pengajuan-izin', { payload })
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -152,6 +154,7 @@ export default class IzinsController {
                 if (auth.user?.id === q.user_id_approval) {
                     q.status_approval = request.input('status_approval')
                     await q.save()
+                    Ws.io.emit('notif-info:approval-izin', { q })
                     return response.send({ status: true, data: {}, msg: 'success' })
                 }
                 return response.send({ status: false, data: { msg: 'approval not valid!' }, msg: 'error' })

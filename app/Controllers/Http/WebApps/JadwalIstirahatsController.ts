@@ -1,8 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Dept from 'App/Models/Dept'
 import JadwalIstirahat from 'App/Models/JadwalIstirahat'
-import Role from 'App/Models/Role'
-import User from 'App/Models/User'
+import MasterGroup from 'App/Models/MasterGroup'
+import UserGroup from 'App/Models/UserGroup'
+import Ws from 'App/Services/Ws'
 import JadwalIstirahatValidator from 'App/Validators/JadwalIstirahatValidator'
 
 export default class JadwalIstirahatsController {
@@ -81,20 +81,13 @@ export default class JadwalIstirahatsController {
             await bouncer.authorize("create-jadwalistirahat")
             if (await bouncer.allows('create-jadwalistirahat')) {
                 switch (request.input('key')) {
-                    case 'divisi':
-                        const divisi = await Dept.all()
-                        return response.send({ status: true, data: divisi, msg: 'success' })
-                    case 'jabatan':
-                        const role = await Role.all()
-                        return response.send({ status: true, data: role, msg: 'success' })
+                    case 'group':
+                        const group = await MasterGroup.all()
+                        return response.send({ status: true, data: group, msg: 'success' })
                     case 'user':
-                        const input = request.input('value').split(",")
-                        const user = await User.query().where((query) => {
-                            query
-                                .where('role_id', input[0])
-                                .where('dept_id', input[1])
-                        })
-                        return response.send({ status: true, data: user, msg: 'success' })
+                        const input = request.input('value')
+                        const cariuSER = await UserGroup.query().where('master_group_id', input).preload('user')
+                        return response.send({ status: true, data: cariuSER, msg: 'success' })
                 }
 
             }
@@ -112,6 +105,7 @@ export default class JadwalIstirahatsController {
                 const q = new JadwalIstirahat()
                 q.merge(payload)
                 await q.save()
+                Ws.io.emit('jadwal-istirahat:new', { payload })
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {

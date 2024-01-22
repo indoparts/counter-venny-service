@@ -1,17 +1,25 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import UserPiket from 'App/Models/UserPiket';
+import Ws from 'App/Services/Ws';
 import { UnlinkFile, UploadFile, uniqueString } from 'App/helper';
 
 export default class PiketIstirahatsController {
   public async index({ auth, response }: HttpContextContract) {
     try {
-      const q = await Database.rawQuery(`SELECT * FROM (SELECT id, 'user_pikets' AS initial, status as state, user_id, time, date, created_at FROM user_pikets UNION ALL SELECT id, 'jadwal_istirahats' AS initial, 'null' as state, user_id, time, date, created_at FROM jadwal_istirahats) xx WHERE user_id = ${auth.user?.id} ORDER BY created_at ASC`)
-      const r = await Database.rawQuery(`SELECT COUNT(user_id) as total FROM (SELECT id, 'user_pikets' AS initial, status as state, user_id, time, date, created_at FROM user_pikets UNION ALL SELECT id, 'jadwal_istirahats' AS initial, 'null' as state, user_id, time, date, created_at FROM jadwal_istirahats) xx WHERE user_id = ${auth.user?.id} AND state = 'n' ORDER BY created_at ASC;`)
-      return response.send({ status: true, data: { data: q[0], count: r[0][0].total }, msg: 'success' })
+      const q = await Database
+        .from('view_notif_piket_n_istirahat')
+        .where('user_id', auth.user?.id!)
+        .orderBy('created_at', 'desc')
+      const r = await Database
+        .from('view_notif_piket_n_istirahat')
+        .where('user_id', auth.user?.id!)
+        .andWhere('state', 'n')
+        .count('* as total')
+      return response.send({ status: true, data: { data: q, count: r[0].total }, msg: 'success' })
     } catch (error) {
       console.log(error);
-
+      
       return response.send({ status: false, data: error.messages, msg: 'error' })
     }
   }
@@ -32,7 +40,6 @@ export default class PiketIstirahatsController {
       })
 
       if (filebefore) {
-        // console.log(filebefore.extname);
         const u = await UserPiket.findByOrFail('id', request.param('id'))
         let unique = uniqueString(5)
         if (u.img_before !== '' || u.img_before !== null) {
@@ -41,6 +48,7 @@ export default class PiketIstirahatsController {
         UploadFile(filebefore, unique, 'uploads/image-piket')
         u.img_before = `${unique}.${filebefore.extname}`
         await u.save()
+        Ws.io.emit('jadwal-piket:piket-image-upload', { u })
       }
       if (fileafter) {
         const u = await UserPiket.findByOrFail('id', request.param('id'))
@@ -52,6 +60,7 @@ export default class PiketIstirahatsController {
         u.img_after = `${unique}.${fileafter.extname}`
         u.status = 'y'
         await u.save()
+        Ws.io.emit('jadwal-piket:piket-image-upload', { u })
       }
       return response.send({ status: true, data: request.input('id'), msg: 'success' })
     } catch (error) {

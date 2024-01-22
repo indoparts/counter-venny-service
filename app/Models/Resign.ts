@@ -2,37 +2,28 @@ import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 
-export default class FormLembur extends BaseModel {
+export default class Resign extends BaseModel {
   @column({ isPrimary: true })
   public id: number
+
   @column()
-  public user_id: number
-  @column.dateTime({ autoCreate: false, autoUpdate: false })
-  public date: DateTime
+  public user_id:number
   @column()
-  public waktu_mulai: string
+  public alasan:string
   @column()
-  public waktu_berakhir: string
+  public masukan:string
   @column()
-  public uraian_tugas: string
-  @column()
-  public user_id_approval: number
-  @column()
-  public status_approval: string
+  public status_persetujuan:string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
   @belongsTo(() => User, {
-    localKey: 'id',
     foreignKey: 'user_id',
   })
   public user: BelongsTo<typeof User>
-  @belongsTo(() => User, {
-    localKey: 'id',
-    foreignKey: 'user_id_approval',
-  })
-  public userapproval: BelongsTo<typeof User>
+
 }

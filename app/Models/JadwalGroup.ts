@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import MasterGroup from './MasterGroup'
+import TimeConfig from './TimeConfig'
 
 export default class JadwalGroup extends BaseModel {
   @column({ isPrimary: true })
@@ -16,4 +18,13 @@ export default class JadwalGroup extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @belongsTo(() => MasterGroup, {
+    foreignKey: 'master_group_id',
+  })
+  public master_group: BelongsTo<typeof MasterGroup>
+  @belongsTo(() => TimeConfig, {
+    foreignKey: 'time_config_id',
+  })
+  public time_config: BelongsTo<typeof TimeConfig>
 }

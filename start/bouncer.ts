@@ -374,6 +374,22 @@ export const { actions } = Bouncer
     .define('report-kasbon', (user: User) => {
         return permissionGuard(user.role_id, 'report-kasbon')
     })
+    // JADWAL KASBON AUTHORIZATION
+    .define('create-resign', (user: User) => {
+        return permissionGuard(user.role_id, 'create-resign')
+    })
+    .define('read-resign', (user: User) => {
+        return permissionGuard(user.role_id, 'read-resign')
+    })
+    .define('update-resign', (user: User) => {
+        return permissionGuard(user.role_id, 'update-resign')
+    })
+    .define('delete-resign', (user: User) => {
+        return permissionGuard(user.role_id, 'delete-resign')
+    })
+    .define('report-resign', (user: User) => {
+        return permissionGuard(user.role_id, 'report-resign')
+    })
 /*
 |--------------------------------------------------------------------------
 | Bouncer Policies

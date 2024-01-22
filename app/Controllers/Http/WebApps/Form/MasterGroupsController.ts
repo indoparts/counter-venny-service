@@ -1,5 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import MasterGroup from 'App/Models/MasterGroup'
+import User from 'App/Models/User'
+import UserGroup from 'App/Models/UserGroup'
 import MasterGroupValidator from 'App/Validators/MasterGroupValidator'
 
 export default class MasterGroupsController {
@@ -40,8 +42,11 @@ export default class MasterGroupsController {
         try {
             await bouncer.authorize("read-mastergroup")
             if (await bouncer.allows('read-mastergroup')) {
-                const q = await MasterGroup.find(request.param('id'));
-                return response.send({ status: true, data: q, msg: 'success' })
+                const q = await MasterGroup.findOrFail(request.param('id'));
+                const findUser = await User.findOrFail(q.user_id_kepgroup)
+                const fetchUser = await User.query().where('dept_id', findUser.dept_id)
+                const userGroup = await UserGroup.query().where('master_group_id', request.param('id'))
+                return response.send({ status: true, data: { mastergroup: q, fetchUser, userGroup }, msg: 'success' })
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })

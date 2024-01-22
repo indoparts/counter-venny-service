@@ -19,7 +19,7 @@ export default class MasterGroup extends BaseModel {
   @manyToMany(() => UserGroup, {
     localKey: 'id',
     pivotForeignKey: 'master_group_id',
-    relatedKey: 'id',
+    relatedKey: 'master_group_id',
     pivotRelatedForeignKey: 'user_id',
     pivotTable: 'user_groups',
   })

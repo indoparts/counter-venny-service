@@ -413,6 +413,27 @@ export default class PermissionSeeder extends BaseSeeder {
         name: "report-kasbon",
         basepermission: "kasbon"
       },
+
+      {
+        name: "create-resign",
+        basepermission: "resign"
+      },
+      {
+        name: "read-resign",
+        basepermission: "resign"
+      },
+      {
+        name: "update-resign",
+        basepermission: "resign"
+      },
+      {
+        name: "delete-resign",
+        basepermission: "resign"
+      },
+      {
+        name: "report-resign",
+        basepermission: "resign"
+      },
     ]
     // console.log(permissionname.length);
     

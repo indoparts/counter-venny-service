@@ -1,5 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import JadwalGroup from 'App/Models/JadwalGroup'
 import TimeConfig from 'App/Models/TimeConfig'
+import UserGroup from 'App/Models/UserGroup'
 import TimeConfigValidator from 'App/Validators/TimeConfigValidator'
 
 export default class TimeConfigsController {
@@ -10,7 +12,7 @@ export default class TimeConfigsController {
                 const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch = await TimeConfig.query().where('type', 'LIKE', '%' + search + '%').orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'created_at',
                         order: sortDesc ? 'desc' : 'asc',
                     }
                 ]).paginate(page, limit)
@@ -72,6 +74,17 @@ export default class TimeConfigsController {
                 return response.send({ status: true, data: {}, msg: 'success' })
             }
         } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+    public async jadwal_user({ response, auth }: HttpContextContract) {
+        try {
+            const findUser = await UserGroup.query().where('user_id', auth.user?.id!)
+            const jadwal = await JadwalGroup.query().where('master_group_id', findUser[0].master_group_id).preload('time_config').preload('master_group')
+            return response.send({ status: true, data: jadwal, msg: 'success' })
+        } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }

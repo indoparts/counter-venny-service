@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import FormLembur from 'App/Models/FormLembur'
+import Ws from 'App/Services/Ws'
 import LemburValidator from 'App/Validators/LemburValidator'
 
 export default class LembursController {
@@ -10,10 +11,58 @@ export default class LembursController {
                 const { sortBy, search, sortDesc, page, limit } = request.all()
                 const fetch = await FormLembur.query().where('user_id', 'LIKE', '%' + search + '%').orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'id',
                         order: sortDesc ? 'desc' : 'asc',
                     }
-                ]).paginate(page, limit)
+                ])
+                .preload('user')
+                .preload('userapproval')
+                .paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            console.log(error);
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+
+    public async report({ bouncer, response, request }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-izin")
+            if (await bouncer.allows('read-izin')) {
+                const { sortBy, sortDesc, page, limit, search, daterange } = request.all()
+                const fetch = await FormLembur.query().orderBy([
+                    {
+                        column: sortBy === '' ? 'created_at' : sortBy,
+                        order: sortDesc ? 'desc' : 'asc',
+                    }
+                ])
+                    .where('user_id', 'LIKE', '%' + search + '%')
+                    .whereBetween('date', daterange.split(","))
+                    .preload('user')
+                    .preload('userapproval')
+                    .paginate(page, limit)
+                return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+
+    public async exportreport({ bouncer, response, request }: HttpContextContract) {
+        try {
+            await bouncer.authorize("read-izin")
+            if (await bouncer.allows('read-izin')) {
+                const { daterange } = request.all()
+                const fetch = await FormLembur.query().orderBy([
+                    {
+                        column: 'created_at',
+                        order: 'asc',
+                    }
+                ])
+                    .whereBetween('date', daterange.split(","))
+                    .preload('user')
+                    .preload('userapproval')
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
@@ -29,6 +78,7 @@ export default class LembursController {
                 const q = new FormLembur()
                 q.merge(payload)
                 await q.save()
+                Ws.io.emit('notif-info:pengajuan-lembur', { payload })
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -84,6 +134,7 @@ export default class LembursController {
                 if (auth.user?.id === q.user_id_approval) {
                     q.status_approval = 'y'
                     await q.save()
+                    Ws.io.emit('notif-info:approval-lembur', { q })
                     return response.send({ status: true, data: {}, msg: 'success' })
                 }
                 return response.send({ status: false, data: { msg: 'approval not valid!' }, msg: 'error' })

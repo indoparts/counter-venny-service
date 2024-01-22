@@ -1,5 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import JadwalGroup from 'App/Models/JadwalGroup'
+import MasterGroup from 'App/Models/MasterGroup'
+import TimeConfig from 'App/Models/TimeConfig'
 import JadwalGroupValidator from 'App/Validators/JadwalGroupValidator'
 
 export default class JadwalGroupsController {
@@ -7,14 +9,35 @@ export default class JadwalGroupsController {
         try {
             await bouncer.authorize("read-jadwalgroup")
             if (await bouncer.allows('read-jadwalgroup')) {
-                const { sortBy, search, sortDesc, page, limit } = request.all()
-                const fetch = await JadwalGroup.query().where('user_id', 'LIKE', '%' + search + '%').orderBy([
+                const { sortBy, sortDesc, page, limit } = request.all()
+                const fetch = await JadwalGroup.query().orderBy([
                     {
-                        column: sortBy,
+                        column: sortBy !== '' ? sortBy : 'created_at',
                         order: sortDesc ? 'desc' : 'asc',
                     }
-                ]).paginate(page, limit)
+                ])
+                .preload('master_group')
+                .preload('time_config')
+                .paginate(page, limit)
                 return response.send({ status: true, data: fetch, msg: 'success' })
+            }
+        } catch (error) {
+            console.log(error);
+
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+
+    public async attr_form({ request, bouncer, response }: HttpContextContract) {
+        try {
+            await bouncer.authorize("create-jadwalgroup")
+            if (await bouncer.allows('create-jadwalgroup')) {
+                switch (request.input('key')) {
+                    case 'group':
+                        const group = await MasterGroup.all()
+                        const time = await TimeConfig.all()
+                        return response.send({ status: true, data: { group, time }, msg: 'success' })
+                }
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
@@ -26,9 +49,15 @@ export default class JadwalGroupsController {
             await bouncer.authorize("create-jadwalgroup")
             if (await bouncer.allows('create-jadwalgroup')) {
                 const payload = await request.validate(JadwalGroupValidator)
-                const q = new JadwalGroup()
-                q.merge(payload)
-                await q.save()
+                const arr: any[] = []
+                payload.date.forEach(el => {
+                    arr.push({
+                        master_group_id: payload.master_group_id,
+                        time_config_id: payload.time_config_id,
+                        date: el
+                    })
+                });
+                await JadwalGroup.createMany(arr)
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -53,9 +82,9 @@ export default class JadwalGroupsController {
             await bouncer.authorize("update-jadwalgroup")
             if (await bouncer.allows('update-jadwalgroup')) {
                 const payload = await request.validate(JadwalGroupValidator)
-                const q = await JadwalGroup.findOrFail(request.param('id'))
-                q.merge(payload)
-                await q.save()
+                // const q = await JadwalGroup.findOrFail(request.param('id'))
+                // q.merge(payload)
+                // await q.save()
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {

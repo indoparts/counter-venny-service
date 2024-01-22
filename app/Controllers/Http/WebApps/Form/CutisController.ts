@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 import FormCuti from "App/Models/FormCuti"
+import Ws from 'App/Services/Ws'
 import CutiValidator from 'App/Validators/CutiValidator'
 
 export default class CutisController {
@@ -84,6 +85,7 @@ export default class CutisController {
                 const q = new FormCuti()
                 q.merge(payload)
                 await q.save()
+                Ws.io.emit('notif-info:pengajuan-cuti', { payload })
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -139,6 +141,7 @@ export default class CutisController {
                 if (auth.user?.id === q.user_id_approval) {
                     q.status_approval = request.input('status_approval')
                     await q.save()
+                    Ws.io.emit('notif-info:approval-cuti', { q })
                     return response.send({ status: true, data: {}, msg: 'success' })
                 }
                 return response.send({ status: false, data: { msg: 'approval not valid!' }, msg: 'error' })

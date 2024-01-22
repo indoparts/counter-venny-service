@@ -1,4 +1,5 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
+import FormulaGaji from 'App/Models/FormulaGaji'
 import VariableGaji from 'App/Models/VariableGaji'
 
 export default class VariableGajiSeeder extends BaseSeeder {
@@ -15,6 +16,20 @@ export default class VariableGajiSeeder extends BaseSeeder {
       {
         variable_name: 'Total absensi perbulan',
         bobot:100
+      },
+    ])
+    await FormulaGaji.createMany([
+      {
+        variable_name: 'Total Gaji',
+        operator: ':'
+      },
+      {
+        variable_name: 'Jumlah hari perbulan',
+        operator: '+'
+      },
+      {
+        variable_name: 'Total absensi perbulan',
+        operator: '='
       },
     ])
   }

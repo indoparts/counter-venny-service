@@ -1,9 +1,9 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Dept from 'App/Models/Dept'
+import MasterGroup from 'App/Models/MasterGroup'
 import MasterPiket from 'App/Models/MasterPiket'
-import Role from 'App/Models/Role'
-import User from 'App/Models/User'
+import UserGroup from 'App/Models/UserGroup'
 import UserPiket from 'App/Models/UserPiket'
+import Ws from 'App/Services/Ws'
 import UserPiketValidator from 'App/Validators/UserPiketValidator'
 
 export default class UserPiketsController {
@@ -85,25 +85,18 @@ export default class UserPiketsController {
             await bouncer.authorize("create-jadwalpiket")
             if (await bouncer.allows('create-jadwalpiket')) {
                 switch (request.input('key')) {
-                    case 'attr':
-                        const divisi = await Dept.all()
-                        const role = await Role.all()
+                    case 'group':
+                        const group = await MasterGroup.all()
                         const piket = await MasterPiket.all()
-                        return response.send({ status: true, data: { divisi, role, piket }, msg: 'success' })
+                        return response.send({ status: true, data: { group: group, piket: piket }, msg: 'success' })
                     case 'user':
-                        const input = request.input('value').split(",")
-                        const user = await User.query().where((query) => {
-                            query
-                                .where('role_id', input[0])
-                                .where('dept_id', input[1])
-                        })
-                        return response.send({ status: true, data: user, msg: 'success' })
+                        const input = request.input('value')
+                        const cariuSER = await UserGroup.query().where('master_group_id', input).preload('user')
+                        return response.send({ status: true, data: cariuSER, msg: 'success' })
                 }
 
             }
         } catch (error) {
-            console.log(error);
-
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -115,6 +108,7 @@ export default class UserPiketsController {
                 const q = new UserPiket()
                 q.merge(payload)
                 await q.save()
+                Ws.io.emit('jadwal-piket:new', { payload })
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -126,11 +120,11 @@ export default class UserPiketsController {
             await bouncer.authorize("read-jadwalpiket")
             if (await bouncer.allows('read-jadwalpiket')) {
                 const fetch = await UserPiket.query()
-                .where('id', request.param('id'))
-                .preload('masterPiket')
-                .preload('user')
-                .preload('role')
-                .preload('dept')
+                    .where('id', request.param('id'))
+                    .preload('masterPiket')
+                    .preload('user')
+                    .preload('role')
+                    .preload('dept')
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {

@@ -36,6 +36,7 @@ Route.group(() => {
   Route.post("login", "WebApps/AuthController.login");
   Route.group(() => {
     Route.get("profile", "WebApps/AuthController.profile");
+    Route.get("beranda", "WebApps/AuthController.beranda");
     Route.post("profile-update", "WebApps/AuthController.profileUpdate");
     Route.post("logout", "WebApps/AuthController.logout");
     Route.resource("users", "WebApps/UsersController").apiOnly();
@@ -60,14 +61,22 @@ Route.group(() => {
     Route.get("report-izin-export", "WebApps/Form/IzinsController.exportreport");
     Route.resource("form-lembur", "WebApps/Form/LembursController").apiOnly();
     Route.put("form-lembur/approval/:id", "WebApps/Form/LembursController.approval");
+    Route.get("report-lembur", "WebApps/Form/LembursController.report");
+    Route.get("report-lembur-export", "WebApps/Form/LembursController.exportreport");
     Route.resource("form-perdin", "WebApps/Form/PerdinsController").apiOnly();
     Route.put("form-perdin/approval/:id", "WebApps/Form/PerdinsController.approval");
+    Route.get("report-perdin", "WebApps/Form/PerdinsController.report");
+    Route.get("report-perdin-export", "WebApps/Form/PerdinsController.exportreport");
     Route.resource("form-reimburs", "WebApps/Form/ReimbursController").apiOnly();
+    Route.get("report-reimburs", "WebApps/Form/ReimbursController.report");
+    Route.get("report-reimburs-export", "WebApps/Form/ReimbursController.exportreport");
     Route.put("form-reimburs/approval/:id", "WebApps/Form/ReimbursController.approval");
     Route.resource("jadwal-group", "WebApps/Form/JadwalGroupsController").apiOnly();
+    Route.get("jadwal-group-attr-form", "WebApps/Form/JadwalGroupsController.attr_form");
     Route.resource("master-group", "WebApps/Form/MasterGroupsController").apiOnly();
     Route.resource("user-group", "WebApps/Form/UserGroupsController").apiOnly();
     Route.resource("time-config", "WebApps/Form/TimeConfigsController").apiOnly();
+    Route.get("time-config-jadwal-user", "WebApps/Form/TimeConfigsController.jadwal_user");
     Route.resource("jadwal-istirahat", "WebApps/JadwalIstirahatsController").apiOnly();
     Route.get("jadwal-istirahat-attr-form", "WebApps/JadwalIstirahatsController.attr_form");
     Route.get("report-jadwal-istirahat", "WebApps/JadwalIstirahatsController.report");
@@ -77,12 +86,23 @@ Route.group(() => {
     Route.get("jadwal-piket-attr-form", "WebApps/UserPiketsController.attr_form");
     Route.get("report-jadwal-piket", "WebApps/UserPiketsController.report");
     Route.get("report-jadwal-piket-export", "WebApps/UserPiketsController.exportreport");
-
+    
     Route.get("absensi-chart", "WebApps/AbsensiController.chart");
     Route.get("absensi-report", "WebApps/AbsensiController.laporan");
-
+    
     Route.resource("variable-gaji", "WebApps/VariableGajisController").apiOnly();
     Route.resource("formula-gaji", "WebApps/FormulaGajisController").apiOnly();
+    Route.post("formula-gaji/generate", "WebApps/FormulaGajisController.generate");
+    Route.resource("gaji", "WebApps/GajisController").apiOnly();
+    Route.get("report-gaji", "WebApps/GajisController.report");
+    Route.get("report-gaji-export", "WebApps/GajisController.exportreport");
+    Route.get("gaji-selip/:userId", "WebApps/GajisController.selip");
+    Route.resource("resign", "WebApps/ResignsController").apiOnly();
+    Route.resource("kasbon", "WebApps/KasbonsController").apiOnly();
+    Route.get("kasbon-create", "WebApps/KasbonsController.create");
+    Route.get("kasbon-user", "WebApps/KasbonsController.user");
+    Route.get("kasbon-report", "WebApps/KasbonsController.report");
+    Route.get("report-kasbon-export", "WebApps/KasbonsController.exportreport");
   }).middleware("auth:api");
 }).prefix("api");
 

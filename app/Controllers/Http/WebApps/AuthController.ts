@@ -7,6 +7,7 @@ import User from 'App/Models/User';
 import { RegisterValidator, LoginValidator } from 'App/Validators/AuthValidator';
 import Drive from '@ioc:Adonis/Core/Drive'
 import { AvatarValidator, PasswordValidator, UserValidatorUpdate } from 'App/Validators/UserValidator'
+import { DateTimeFormated, arrayUnique } from 'App/helper';
 
 export default class AuthController {
     /*
@@ -64,6 +65,10 @@ export default class AuthController {
     */
     public async profile({ auth, response }: HttpContextContract) {
         try {
+            const getJadwal = await Database
+                .from('view_jadwal_group_users')
+                .where('id', auth.user?.id!)
+                .andWhere('date', DateTimeFormated('YYYY-MM-DD', new Date()))
             const fetch = await User.findOrFail(auth.user?.id)
             if (await fetch.save()) {
                 const permission: string[] = [];
@@ -97,6 +102,7 @@ export default class AuthController {
                     "role_name": rolename?.rolename,
                     "dept_name": deptname?.deptname,
                     "work_location_detail": {},
+                    "jadwal": getJadwal[0],
                 }
                 if (fetch.work_location === 'toko') {
                     const x = await Database.rawQuery(`SELECT mt.* FROM users u JOIN user_tokos ut ON u.id = ut.user_id JOIN master_tokos mt ON ut.master_toko_id = mt.id WHERE u.id = ${auth.user?.id};`)
@@ -113,6 +119,8 @@ export default class AuthController {
                 return response.send({ status: true, data: { user: q, permission }, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -168,6 +176,139 @@ export default class AuthController {
             }
             const msg = (await auth.check()) ? 'Success logout' : 'Invalid Credential'
             return response.send({ status: true, data: msg, msg: 'success' })
+        } catch (error) {
+            return response.send({ status: false, data: error.messages, msg: 'error' })
+        }
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | BERANDA CHART::FUNCTION
+    |--------------------------------------------------------------------------
+    */
+    public async beranda({ response }: HttpContextContract) {
+        try {
+            const chart_cuti_once = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(date) as month_name FROM form_cutis where YEAR(date) = date('Y') AND req_type = 'once' GROUP BY month_name`)
+            const chart_cuti_range = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(date) as month_name FROM form_cutis where YEAR(date) = date('Y') AND req_type = 'range' GROUP BY month_name`)
+            const month1: string[] = [];
+            const month2: string[] = [];
+            const once: number[] = [];
+            const range: number[] = [];
+            chart_cuti_once[0].forEach(element => {
+                month1.push(element.month_name)
+            });
+            chart_cuti_range[0].forEach(element => {
+                month2.push(element.month_name)
+            });
+            var Q = arrayUnique(month1.concat(month2));
+            const label = Q.sort(function (a, b) {
+                return a - b;
+            })
+            label.forEach(bulan => {
+                let obj = chart_cuti_once[0].find(o => o.month_name === bulan);
+                if (obj !== undefined) {
+                    once.push(obj.count)
+                } else {
+                    once.push(0)
+                }
+            });
+            label.forEach(bulan => {
+                let obj = chart_cuti_range[0].find(o => o.month_name === bulan);
+                if (obj !== undefined) {
+                    range.push(obj.count)
+                } else {
+                    range.push(0)
+                }
+            });
+            
+            const chart_resign = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(created_at) as month_name FROM resigns where YEAR(created_at) = date('Y') GROUP BY month_name;`)
+            const bln: string[] = [];
+            const val: number[] = [];
+            chart_resign[0].forEach(element => {
+                bln.push(element.month_name)
+            });
+            var B = arrayUnique(bln);
+            const labelResign = B.sort(function (a, b) {
+                return a - b;
+            })
+            labelResign.forEach(bulan => {
+                let obj = chart_resign[0].find(o => o.month_name === bulan);
+                if (obj !== undefined) {
+                    val.push(obj.count)
+                } else {
+                    val.push(0)
+                }
+            });
+
+            const chart_izin_1 = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(date) as month_name, permit_req FROM form_izins where YEAR(date) = date('Y') AND permit_req = 'come to late' GROUP BY month_name`)
+            const chart_izin_2 = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(date) as month_name, permit_req FROM form_izins where YEAR(date) = date('Y') AND permit_req = 'sick' GROUP BY month_name`)
+            const chart_izin_3 = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(date) as month_name, permit_req FROM form_izins where YEAR(date) = date('Y') AND permit_req = 'not present' GROUP BY month_name`)
+            const chart_izin_4 = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(date) as month_name, permit_req FROM form_izins where YEAR(date) = date('Y') AND permit_req = 'other' GROUP BY month_name`)
+            const monthIzin1: string[] = [];
+            const monthIzin2: string[] = [];
+            const monthIzin3: string[] = [];
+            const monthIzin4: string[] = [];
+            const permit1: string[] = [];
+            const permit2: string[] = [];
+            const permit3: string[] = [];
+            const permit4: string[] = [];
+            const charts: number[] = [];
+            chart_izin_1[0].forEach(element => {
+                permit1.push(element.permit_req)
+                monthIzin1.push(element.month_name)
+            });
+            chart_izin_2[0].forEach(element => {
+                permit2.push(element.permit_req)
+                monthIzin2.push(element.month_name)
+            });
+            chart_izin_3[0].forEach(element => {
+                permit3.push(element.permit_req)
+                monthIzin3.push(element.month_name)
+            });
+            chart_izin_4[0].forEach(element => {
+                permit4.push(element.permit_req)
+                monthIzin4.push(element.month_name)
+            });
+            var Q = arrayUnique(permit1.concat(permit2, permit3, permit4));
+            const labelizin = Q.sort(function (a, b) {
+                return a - b;
+            })
+            labelizin.forEach(permit => {
+                let obj = chart_izin_1[0].find(o => o.permit_req === permit);
+                if (obj !== undefined) {
+                    charts.push(obj.count)
+                }
+            });
+            labelizin.forEach(permit => {
+                let obj = chart_izin_2[0].find(o => o.permit_req === permit);
+                if (obj !== undefined) {
+                    charts.push(obj.count)
+                }
+            });
+            labelizin.forEach(permit => {
+                let obj = chart_izin_3[0].find(o => o.permit_req === permit);
+                if (obj !== undefined) {
+                    charts.push(obj.count)
+                }
+            });
+            labelizin.forEach(permit => {
+                let obj = chart_izin_4[0].find(o => o.permit_req === permit);
+                if (obj !== undefined) {
+                    charts.push(obj.count)
+                }
+            });
+
+            return response.send({
+                status: true, data: {
+                    cutichart: { label, once, range },
+                    izinchart: {
+                        labelizin, charts
+                    },
+                    resign: {
+                        labelResign, val
+                    }
+                }, msg: 'success'
+            })
+            // return response.send({ status: true, data: msg, msg: 'success' })
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }

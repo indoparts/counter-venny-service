@@ -1,20 +1,21 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
+import AngsuranKasbon from './AngsuranKasbon'
 
-export default class FormLembur extends BaseModel {
+export default class Kasbon extends BaseModel {
   @column({ isPrimary: true })
   public id: number
   @column()
   public user_id: number
-  @column.dateTime({ autoCreate: false, autoUpdate: false })
-  public date: DateTime
   @column()
-  public waktu_mulai: string
+  public nominal_pinjaman: number
   @column()
-  public waktu_berakhir: string
+  public nominal_angsuran: number
   @column()
-  public uraian_tugas: string
+  public tenor: number
+  @column()
+  public status_pinjaman: string
   @column()
   public user_id_approval: number
   @column()
@@ -25,14 +26,15 @@ export default class FormLembur extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
   @belongsTo(() => User, {
-    localKey: 'id',
     foreignKey: 'user_id',
   })
   public user: BelongsTo<typeof User>
-  @belongsTo(() => User, {
-    localKey: 'id',
-    foreignKey: 'user_id_approval',
+
+  @hasMany(() => AngsuranKasbon, {
+    foreignKey: 'kasbon_id',
   })
-  public userapproval: BelongsTo<typeof User>
+  public angsuran: HasMany<typeof AngsuranKasbon>
+
 }

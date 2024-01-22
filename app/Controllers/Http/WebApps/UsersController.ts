@@ -6,6 +6,7 @@ import MasterOffice from 'App/Models/MasterOffice'
 import MasterToko from 'App/Models/MasterToko'
 import Role from 'App/Models/Role'
 import User from 'App/Models/User'
+import UserGroup from 'App/Models/UserGroup'
 import UserGudang from 'App/Models/UserGudang'
 import UserOffice from 'App/Models/UserOffice'
 import UserToko from 'App/Models/UserToko'
@@ -221,36 +222,11 @@ export default class UsersController {
     }
     public async user_approval({ response, auth }: HttpContextContract) {
         try {
-            switch (auth.user?.work_location) {
-                case 'office':
-                    const uo = await UserOffice
-                        .query()
-                        .preload('user')
-                    return response.send({
-                        status: true, data: uo, auth: auth.user, msg: 'success'
-                    })
-                case 'gudang':
-                    const ug = await UserGudang
-                        .query()
-                        .preload('user')
-                    return response.send({
-                        status: true, data: ug, auth: auth.user, msg: 'success'
-                    })
-                case 'toko':
-                    const ut = await UserToko
-                        .query()
-                        .preload('user')
-                    return response.send({
-                        status: true, data: ut, auth: auth.user, msg: 'success'
-                    })
-                default:
-                    return response.send({
-                        status: true, data: [], auth: auth.user, msg: 'success'
-                    })
-            }
+            const carigroup = await UserGroup.findByOrFail('user_id', auth.user?.id)
+            const cariuSER = await UserGroup.query().where('master_group_id', carigroup.master_group_id).preload('user')
+            
+            return response.send({ status: true, data: cariuSER, auth: auth.user, msg: 'success' })
         } catch (error) {
-            console.log(error);
-
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }

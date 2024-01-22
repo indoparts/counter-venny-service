@@ -26,7 +26,7 @@ export class FileValidator extends Messages {
   public schema = schema.create({
     file: schema.file({
       size: '10mb',
-      extnames: ['jpg', 'gif', 'png'],
+      extnames: ['jpg', 'png','JPG', 'PNG'],
     }),
   })
 }

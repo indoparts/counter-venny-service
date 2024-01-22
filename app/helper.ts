@@ -33,6 +33,7 @@ export function uniqueDatime(xDate) {
         + xDate.getMinutes().toString(10).padStart(2, '0')
         + xDate.getSeconds().toString(10).padStart(2, '0')
 }
+
 export function arrayUnique(array) {
     var a = array.concat();
     for (var i = 0; i < a.length; ++i) {
@@ -42,4 +43,16 @@ export function arrayUnique(array) {
         }
     }
     return a;
+}
+
+export function gaji_variable(variable_name, bobot, gajiperhari, periode, total_absen) {
+    switch (variable_name) {
+        case 'Total Gaji':
+            return gajiperhari / bobot * 100;
+        case 'Jumlah hari perbulan':
+            const dateparse = new Date(periode)
+            return new Date(dateparse.getFullYear(), dateparse.getMonth() + 1, 0).getDate();
+        case 'Total absensi perbulan':
+            return (gajiperhari * total_absen) / bobot * 100;
+    }
 }
