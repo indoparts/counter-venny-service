@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterGroup from 'App/Models/MasterGroup'
-import User from 'App/Models/User'
-import UserGroup from 'App/Models/UserGroup'
+import MasterGroup from 'App/Models/MasterData/MasterGroup'
+import User from 'App/Models/MasterData/Users/User'
+import UserGroup from 'App/Models/MasterData/Users/UserGroup'
 import UserGroupValidator from 'App/Validators/UserGroupValidator'
 
 export default class UserGroupsController {
@@ -9,21 +9,17 @@ export default class UserGroupsController {
         try {
             await bouncer.authorize("read-usergroup")
             if (await bouncer.allows('read-usergroup')) {
-                const { page, limit, sortDesc } = request.all()
-                const fetch = await UserGroup.query()
-                    .preload('master_group')
-                    .preload('user')
-                    .orderBy([
-                        {
-                            column: 'created_at',
-                            order: sortDesc ? 'desc' : 'asc',
-                        }
-                    ]).paginate(page, limit)
+                const { page, limit } = request.all()
+                const fetch = await MasterGroup.query()
+                    .preload('membersTeams')
+                    .paginate(page, limit)
                 const user = await User.all()
                 const allgroup = await MasterGroup.all()
                 return response.send({ status: true, data: { datatable: fetch, user, allgroup }, msg: 'success' })
             }
         } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -43,7 +39,7 @@ export default class UserGroupsController {
                 // }
                 // await UserGroup.updateOrCreateMany(['master_group_id', 'user_id'], arrname)
                 const find = await MasterGroup.findOrFail(payload.master_group_id)
-                await find.related('permission').sync(payload.user_id)
+                await find.related('members').sync(payload.user_id)
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
@@ -90,7 +86,7 @@ export default class UserGroupsController {
                 for (let i = 0; i < fetch.length; i++) {
                     arrname.push(fetch[i])
                 }
-                await (await MasterGroup.findOrFail(payload.master_group_id)).related('permission').sync(arrname)
+                await (await MasterGroup.findOrFail(payload.master_group_id)).related('members').sync(arrname)
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {

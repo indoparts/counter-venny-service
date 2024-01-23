@@ -7,7 +7,7 @@
 
 import Bouncer from '@ioc:Adonis/Addons/Bouncer'
 import Database from '@ioc:Adonis/Lucid/Database';
-import User from 'App/Models/User';
+import User from 'App/Models/MasterData/Users/User';
 
 /*
 |--------------------------------------------------------------------------

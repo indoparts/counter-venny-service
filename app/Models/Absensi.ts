@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, HasOne, belongsTo, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
-import User from './User'
-import MasterToko from './MasterToko'
+import User from './MasterData/Users/User'
+import MasterToko from './MasterData/MasterToko'
 
 export default class Absensi extends BaseModel {
   @column({ isPrimary: true })

@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterToko from 'App/Models/MasterToko'
+import MasterToko from 'App/Models/MasterData/MasterToko'
 import MasterTokoValidator from 'App/Validators/MasterTokoValidator'
 
 export default class MasterTokoController {

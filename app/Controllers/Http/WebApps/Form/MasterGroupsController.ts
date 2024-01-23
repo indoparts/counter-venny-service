@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterGroup from 'App/Models/MasterGroup'
-import User from 'App/Models/User'
-import UserGroup from 'App/Models/UserGroup'
+import MasterGroup from 'App/Models/MasterData/MasterGroup'
+import User from 'App/Models/MasterData/Users/User'
+import UserGroup from 'App/Models/MasterData/Users/UserGroup'
 import MasterGroupValidator from 'App/Validators/MasterGroupValidator'
 
 export default class MasterGroupsController {

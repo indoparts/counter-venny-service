@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterGudang from 'App/Models/MasterGudang'
+import MasterGudang from 'App/Models/MasterData/MasterGudang'
 import MasterGudangValidator from 'App/Validators/MasterGudangValidator'
 
 export default class MasterGudangController {

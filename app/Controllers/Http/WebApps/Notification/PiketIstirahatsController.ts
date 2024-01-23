@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
-import UserPiket from 'App/Models/UserPiket';
+import UserPiket from 'App/Models/MasterData/Users/UserPiket';
 import Ws from 'App/Services/Ws';
 import { UnlinkFile, UploadFile, uniqueString } from 'App/helper';
 

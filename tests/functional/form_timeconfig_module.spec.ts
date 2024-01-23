@@ -1,5 +1,5 @@
 import { test } from '@japa/runner'
-import User from 'App/Models/User'
+import User from 'App/Models/MasterData/Users/User'
 
 test.group('FORM TIME CONFIG module', () => {
     test('time-config list test', async ({ client }) => {

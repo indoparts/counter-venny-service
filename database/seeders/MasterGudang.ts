@@ -1,5 +1,5 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import MasterGudang from 'App/Models/MasterGudang'
+import MasterGudang from 'App/Models/MasterData/MasterGudang'
 
 export default class DeptSeeder extends BaseSeeder {
   public async run() {

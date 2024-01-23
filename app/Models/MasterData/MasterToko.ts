@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
-import UserToko from './UserToko'
+import UserToko from './Users/UserToko'
 
 export default class MasterToko extends BaseModel {
   @column({ isPrimary: true })

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
-import UserGudang from './UserGudang'
+import UserGudang from './Users/UserGudang'
 
 export default class MasterGudang extends BaseModel {
   @column({ isPrimary: true })

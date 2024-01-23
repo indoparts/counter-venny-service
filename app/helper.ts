@@ -56,3 +56,14 @@ export function gaji_variable(variable_name, bobot, gajiperhari, periode, total_
             return (gajiperhari * total_absen) / bobot * 100;
     }
 }
+
+export function errMsg(error){
+    switch (error.code) {
+        case 'ER_DUP_ENTRY':
+            return { msg: `${error.sqlMessage}`, status: 500 }
+            break;
+    
+        default:
+            break;
+    }
+}

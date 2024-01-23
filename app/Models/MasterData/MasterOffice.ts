@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
-import UserOffice from './UserOffice'
+import UserOffice from './Users/UserOffice'
 
 export default class MasterOffice extends BaseModel {
   @column({ isPrimary: true })

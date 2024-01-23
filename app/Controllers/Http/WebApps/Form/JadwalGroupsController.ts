@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import JadwalGroup from 'App/Models/JadwalGroup'
-import MasterGroup from 'App/Models/MasterGroup'
+import MasterGroup from 'App/Models/MasterData/MasterGroup'
 import TimeConfig from 'App/Models/TimeConfig'
 import JadwalGroupValidator from 'App/Validators/JadwalGroupValidator'
 

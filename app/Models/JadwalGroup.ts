@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import MasterGroup from './MasterGroup'
+import MasterGroup from './MasterData/MasterGroup'
 import TimeConfig from './TimeConfig'
 
 export default class JadwalGroup extends BaseModel {

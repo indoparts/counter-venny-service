@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
-import UserGroup from './UserGroup'
+import { BaseModel, HasMany, ManyToMany, column, hasMany, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import UserGroup from './Users/UserGroup'
 
 export default class MasterGroup extends BaseModel {
   @column({ isPrimary: true })
@@ -23,5 +23,17 @@ export default class MasterGroup extends BaseModel {
     pivotRelatedForeignKey: 'user_id',
     pivotTable: 'user_groups',
   })
-  public permission: ManyToMany<typeof UserGroup>
+  public members: ManyToMany<typeof UserGroup>
+
+  @hasMany(() => UserGroup, {
+    localKey: 'id',
+    foreignKey: 'master_group_id',
+    onQuery(query) {
+      if (!query.isRelatedSubQuery) {
+        query
+          .preload('user')
+      }
+    }
+  })
+  public membersTeams: HasMany<typeof UserGroup>
 }

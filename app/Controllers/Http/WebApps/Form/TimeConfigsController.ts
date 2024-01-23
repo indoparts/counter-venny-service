@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import JadwalGroup from 'App/Models/JadwalGroup'
 import TimeConfig from 'App/Models/TimeConfig'
-import UserGroup from 'App/Models/UserGroup'
+import UserGroup from 'App/Models/MasterData/Users/UserGroup'
 import TimeConfigValidator from 'App/Validators/TimeConfigValidator'
 
 export default class TimeConfigsController {
@@ -79,10 +79,10 @@ export default class TimeConfigsController {
     }
     public async jadwal_user({ response, auth }: HttpContextContract) {
         try {
-            const findUser = await UserGroup.query().where('user_id', auth.user?.id!).first()
+            const findUser = await UserGroup.findByOrFail('user_id', auth.user?.id!)
             if (findUser) {
                 const jadwal = await JadwalGroup.query()
-                    .where('master_group_id', findUser[0].master_group_id)
+                    .where('master_group_id', findUser.master_group_id)
                     .preload('time_config')
                     .preload('master_group')
                 return response.send({ status: true, data: jadwal, msg: 'success' })

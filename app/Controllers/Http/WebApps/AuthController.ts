@@ -3,7 +3,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import Database from '@ioc:Adonis/Lucid/Database';
 import Dept from 'App/Models/Dept';
 import Role from 'App/Models/Role';
-import User from 'App/Models/User';
+import User from 'App/Models/MasterData/Users/User';
 import { RegisterValidator, LoginValidator } from 'App/Validators/AuthValidator';
 import Drive from '@ioc:Adonis/Core/Drive'
 import { AvatarValidator, PasswordValidator, UserValidatorUpdate } from 'App/Validators/UserValidator'
@@ -66,9 +66,15 @@ export default class AuthController {
     public async profile({ auth, response }: HttpContextContract) {
         try {
             const getJadwal = await Database
-                .from('view_jadwal_group_users')
-                .where('id', auth.user?.id!)
-                .andWhere('date', DateTimeFormated('YYYY-MM-DD', new Date()))
+                .from('users')
+                .join('user_groups', 'users.id', '=', 'user_groups.user_id')
+                .join('master_groups', 'user_groups.master_group_id', '=', 'master_groups.id')
+                .join('jadwal_groups', 'master_groups.id', '=', 'jadwal_groups.master_group_id')
+                .join('time_configs', 'jadwal_groups.time_config_id', '=', 'time_configs.id')
+                .where('users.id', auth.user?.id!)
+                .andWhere('jadwal_groups.date', DateTimeFormated('YYYY-MM-DD', new Date()))
+                .select('time_configs.*')
+                .first()
             const fetch = await User.findOrFail(auth.user?.id)
             if (await fetch.save()) {
                 const permission: string[] = [];
@@ -102,7 +108,7 @@ export default class AuthController {
                     "role_name": rolename?.rolename,
                     "dept_name": deptname?.deptname,
                     "work_location_detail": {},
-                    "jadwal": getJadwal[0],
+                    "jadwal": getJadwal,
                 }
                 if (fetch.work_location === 'toko') {
                     const x = await Database.rawQuery(`SELECT mt.* FROM users u JOIN user_tokos ut ON u.id = ut.user_id JOIN master_tokos mt ON ut.master_toko_id = mt.id WHERE u.id = ${auth.user?.id};`)
@@ -120,7 +126,7 @@ export default class AuthController {
             }
         } catch (error) {
             console.log(error);
-            
+
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -219,7 +225,7 @@ export default class AuthController {
                     range.push(0)
                 }
             });
-            
+
             const chart_resign = await Database.rawQuery(`SELECT COUNT(*) as count, MONTHNAME(created_at) as month_name FROM resigns where YEAR(created_at) = date('Y') GROUP BY month_name;`)
             const bln: string[] = [];
             const val: number[] = [];

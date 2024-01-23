@@ -1,5 +1,5 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import MasterOffice from 'App/Models/MasterOffice'
+import MasterOffice from 'App/Models/MasterData/MasterOffice'
 
 export default class DeptSeeder extends BaseSeeder {
   public async run() {

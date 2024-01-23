@@ -1,5 +1,5 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import MasterToko from 'App/Models/MasterToko'
+import MasterToko from 'App/Models/MasterData/MasterToko'
 
 export default class DeptSeeder extends BaseSeeder {
   public async run() {

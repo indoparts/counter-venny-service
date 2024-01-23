@@ -1,5 +1,5 @@
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import MasterGroup from './MasterGroup'
+import MasterGroup from '../MasterGroup'
 import User from './User'
 
 export default class UserGroup extends BaseModel {

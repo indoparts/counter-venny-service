@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import User from './User'
+import User from './MasterData/Users/User'
 
 export default class FormReimbur extends BaseModel {
   @column({ isPrimary: true })

@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Kasbon from 'App/Models/Kasbon'
-import User from 'App/Models/User'
+import User from 'App/Models/MasterData/Users/User'
 import KasbonValidator from 'App/Validators/KasbonValidator'
 
 export default class KasbonsController {

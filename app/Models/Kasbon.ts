@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
-import User from './User'
+import User from './MasterData/Users/User'
 import AngsuranKasbon from './AngsuranKasbon'
 
 export default class Kasbon extends BaseModel {

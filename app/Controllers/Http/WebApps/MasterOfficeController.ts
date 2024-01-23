@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterOffice from 'App/Models/MasterOffice'
+import MasterOffice from 'App/Models/MasterData/MasterOffice'
 import MasterOfficeValidator from 'App/Validators/MasterOfficeValidator'
 
 export default class MasterOfficeController {

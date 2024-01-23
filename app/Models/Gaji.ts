@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import GajiVariable from './GajiVariable'
-import User from './User'
+import User from './MasterData/Users/User'
 
 export default class Gaji extends BaseModel {
   @column({ isPrimary: true })

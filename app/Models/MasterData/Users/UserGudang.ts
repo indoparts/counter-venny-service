@@ -1,17 +1,17 @@
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import MasterOffice from './MasterOffice'
+import MasterGudang from '../MasterGudang'
 import User from './User'
 
-export default class UserOffice extends BaseModel {
+export default class UserGudang extends BaseModel {
   @column()
-  public master_office_id: number
+  public master_gudang_id: number
   @column()
   public user_id: number
-
-  @belongsTo(() => MasterOffice, {
-    foreignKey: 'master_office_id',
+  
+  @belongsTo(() => MasterGudang, {
+    foreignKey: 'master_gudang_id',
   })
-  public office: BelongsTo<typeof MasterOffice>
+  public gudang: BelongsTo<typeof MasterGudang>
   @belongsTo(() => User, {
     foreignKey: 'user_id',
   })

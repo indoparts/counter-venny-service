@@ -1,38 +1,23 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database'
-import Dept from 'App/Models/Dept'
-import MasterGudang from 'App/Models/MasterGudang'
-import MasterOffice from 'App/Models/MasterOffice'
-import MasterToko from 'App/Models/MasterToko'
-import Role from 'App/Models/Role'
-import User from 'App/Models/User'
-import UserGroup from 'App/Models/UserGroup'
-import UserGudang from 'App/Models/UserGudang'
-import UserOffice from 'App/Models/UserOffice'
-import UserToko from 'App/Models/UserToko'
+import UserOperations from 'App/Controllers/Repositories/Operations/UserOperations'
+import User from 'App/Models/MasterData/Users/User'
 import { UserValidatorStore, UserValidatorUpdate, AvatarValidator, PasswordValidator } from 'App/Validators/UserValidator'
-import { UnlinkFile, UploadFile } from 'App/helper'
+import { UnlinkFile, UploadFile, errMsg } from 'App/helper'
+
 export default class UsersController {
+    private operation: any;
+    constructor() {
+        this.operation = new UserOperations();
+    }
 
     public async index({ bouncer, response, request }: HttpContextContract) {
         try {
             await bouncer.authorize("read-user")
             if (await bouncer.allows('read-user')) {
-                const { sortBy, search, sortDesc, page, limit } = request.all()
-                const fetch = await User.query()
-                    .where(sortBy !== '' ? sortBy : 'name', 'LIKE', '%' + search + '%')
-                    .orderBy([
-                        {
-                            column: sortBy !== '' ? sortBy : 'nik',
-                            order: sortDesc ? 'desc' : 'asc',
-                        }
-                    ])
-                    .preload('roles').preload('dept').paginate(page, limit)
+                const fetch = await this.operation.UserList(request.all())
                 return response.send({ status: true, data: fetch, msg: 'success' })
             }
         } catch (error) {
-            console.log(error);
-
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -42,54 +27,14 @@ export default class UsersController {
             await bouncer.authorize("create-user")
             if (await bouncer.allows('create-user')) {
                 const payload = await request.validate(UserValidatorStore)
-                UploadFile(payload.avatar, payload.nik, 'uploads/avatar-users')
-                const user = new User()
-                user.role_id = payload.role_id
-                user.dept_id = payload.dept_id
-                user.name = payload.name
-                user.email = payload.email != null ? payload.email : ''
-                user.nik = payload.nik
-                user.password = payload.password
-                user.activation = payload.activation
-                user.avatar = `${payload.nik}.${payload.avatar.extname}`
-                user.work_location = payload.work_location
-                user.saldo_cuti = payload.saldo_cuti
-                user.hp = payload.hp
-                user.status = payload.status
-                user.tgl_join = request.input('tgl_join')
-                user.limit_kasbon = payload.limit_kasbon
-                user.total_gaji_perbulan = payload.total_gaji_perbulan
-                if (await user.save()) {
-                    switch (payload.work_location) {
-                        case 'gudang':
-                            await UserGudang.updateOrCreate({
-                                user_id: request.param('id')
-                            }, {
-                                master_gudang_id: parseInt(request.input('work_location_master'))
-                            })
-                            break;
-                        case 'office':
-                            await UserOffice.updateOrCreate({
-                                user_id: request.param('id')
-                            }, {
-                                master_office_id: parseInt(request.input('work_location_master'))
-                            })
-                            break;
-                        case 'toko':
-                            await UserToko.updateOrCreate({
-                                user_id: request.param('id')
-                            }, {
-                                master_toko_id: parseInt(request.input('work_location_master'))
-                            })
-                            break;
-                    }
-                }
+                payload['tgl_join']=request.input('tgl_join')?request.input('tgl_join'):null
+                payload['work_location_master']=request.input('work_location_master')
+                await this.operation.UserStore(payload)
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            console.log(error);
-
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            const err = errMsg(error)
+            return response.status(err!.status).send({ status: false, data: error, msg: err!.msg })
         }
     }
 
@@ -97,37 +42,11 @@ export default class UsersController {
         try {
             await bouncer.authorize("read-user")
             if (await bouncer.allows('read-user')) {
-                const user = await User
-                    .query()
-                    .where('id', request.param('id'))
-                    .preload('roles')
-                    .preload('dept')
-
-                if (user[0].work_location === 'office') {
-                    const q = await Database
-                        .from('users as u')
-                        .join('user_offices as uo', 'u.id', '=', 'uo.user_id')
-                        .select('uo.master_office_id')
-                    user.push((typeof q[0] !== 'undefined') ? q[0].master_office_id : 0)
-                } else if (user[0].work_location === 'gudang') {
-                    const q = await Database
-                        .from('users as u')
-                        .join('user_gudangs as ug', 'u.id', '=', 'ug.user_id')
-                        .select('ug.master_gudang_id')
-                    user.push((typeof q[0] !== 'undefined') ? q[0].master_gudang_id : 0)
-                } else if (user[0].work_location === 'toko') {
-                    const q = await Database
-                        .from('users as u')
-                        .join('user_tokos as ut', 'u.id', '=', 'ut.user_id')
-                        .select('ut.master_toko_id')
-                    user.push((typeof q[0] !== 'undefined') ? q[0].master_toko_id : 0)
-                }
+                const user = await this.operation.UserShow(request.param('id'))
                 return response.send({ status: true, data: user, msg: 'success' })
             }
         } catch (error) {
-            console.log(error);
-
-            // return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
 
@@ -140,55 +59,19 @@ export default class UsersController {
                     const payimg = await request.validate(AvatarValidator)
                     UnlinkFile(user.avatar, 'uploads/avatar-users')
                     UploadFile(payimg.avatar, payload.nik, 'uploads/avatar-users')
-                    user.avatar = `${payload.nik}.${payimg.avatar.extname}`
+                    payload['avatar']=`${payload.nik}.${payimg.avatar.extname}`
                 }
                 if (request.input('password') != null) {
                     const paypass = await request.validate(PasswordValidator)
-                    user.password = paypass.password
+                    payload['password']=paypass
                 }
-                user.role_id = payload.role_id
-                user.dept_id = payload.dept_id
-                user.name = payload.name
-                user.email = payload.email != null ? payload.email : ''
-                user.nik = payload.nik
-                user.activation = payload.activation
-                user.work_location = payload.work_location
-                user.saldo_cuti = payload.saldo_cuti
-                user.hp = payload.hp
-                user.status = payload.status
-                user.tgl_join = request.input('tgl_join')
-                user.limit_kasbon = payload.limit_kasbon
-                user.total_gaji_perbulan = payload.total_gaji_perbulan
-                if (await user.save()) {
-                    switch (payload.work_location) {
-                        case 'gudang':
-                            await UserGudang.updateOrCreate({
-                                user_id: request.param('id')
-                            }, {
-                                master_gudang_id: parseInt(request.input('work_location_master'))
-                            })
-                            break;
-                        case 'office':
-                            await UserOffice.updateOrCreate({
-                                user_id: request.param('id')
-                            }, {
-                                master_office_id: parseInt(request.input('work_location_master'))
-                            })
-                            break;
-                        case 'toko':
-                            await UserToko.updateOrCreate({
-                                user_id: request.param('id')
-                            }, {
-                                master_toko_id: parseInt(request.input('work_location_master'))
-                            })
-                            break;
-                    }
-                }
+                payload['id']=request.param('id')
+                payload['work_location_master']=request.input('work_location_master')
+                payload['tgl_join']=request.input('tgl_join')?request.input('tgl_join'):null
+                await this.operation.UserUpdate(request.param('id'), payload)
                 return response.send({ status: true, data: payload, msg: 'success' })
             }
         } catch (error) {
-            console.log(error);
-
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
@@ -197,24 +80,19 @@ export default class UsersController {
         try {
             await bouncer.authorize("delete-user")
             if (await bouncer.allows('delete-user')) {
-                const user = await User.findOrFail(request.param('id'))
-                UnlinkFile(user.avatar, 'uploads/avatar-users')
-                await user.delete()
-                return response.send({ status: true, data: {}, msg: 'success' })
+                const user = await this.operation.UserDelete(request.param('id'))
+                return response.send({ status: true, data: user, msg: 'success' })
             }
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }
+
     public async attr_form({ response }: HttpContextContract) {
         try {
-            const roles = await Role.all()
-            const depts = await Dept.all()
-            const toko = await MasterToko.all()
-            const office = await MasterOffice.all()
-            const gudang = await MasterGudang.all()
+            const data = await this.operation.attr()
             return response.send({
-                status: true, data: { roles, depts, toko, office, gudang }, msg: 'success'
+                status: true, data: data, msg: 'success'
             })
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })
@@ -222,9 +100,7 @@ export default class UsersController {
     }
     public async user_approval({ response, auth }: HttpContextContract) {
         try {
-            const carigroup = await UserGroup.findByOrFail('user_id', auth.user?.id)
-            const cariuSER = await UserGroup.query().where('master_group_id', carigroup.master_group_id).preload('user')
-            
+            const cariuSER = await this.operation.UserApproval(auth)
             return response.send({ status: true, data: cariuSER, auth: auth.user, msg: 'success' })
         } catch (error) {
             return response.send({ status: false, data: error.messages, msg: 'error' })

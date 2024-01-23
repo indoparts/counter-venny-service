@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import MasterPiket from './MasterPiket'
+import MasterPiket from '../MasterPiket'
 import User from './User'
-import Dept from './Dept'
-import Role from './Role'
+import Dept from '../../Dept'
+import Role from '../../Role'
 
 export default class UserPiket extends BaseModel {
   @column({ isPrimary: true })

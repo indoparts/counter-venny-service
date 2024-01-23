@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterPiket from 'App/Models/MasterPiket'
+import MasterPiket from 'App/Models/MasterData/MasterPiket'
 import MasterPiketValidator from 'App/Validators/MasterPiketValidator'
 
 export default class MasterPiketsController {

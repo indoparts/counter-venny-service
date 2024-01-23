@@ -1,8 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterGroup from 'App/Models/MasterGroup'
-import MasterPiket from 'App/Models/MasterPiket'
-import UserGroup from 'App/Models/UserGroup'
-import UserPiket from 'App/Models/UserPiket'
+import MasterGroup from 'App/Models/MasterData/MasterGroup'
+import MasterPiket from 'App/Models/MasterData/MasterPiket'
+import UserGroup from 'App/Models/MasterData/Users/UserGroup'
+import UserPiket from 'App/Models/MasterData/Users/UserPiket'
 import Ws from 'App/Services/Ws'
 import UserPiketValidator from 'App/Validators/UserPiketValidator'
 

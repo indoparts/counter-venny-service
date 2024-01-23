@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterPelanggan from 'App/Models/MasterPelanggan'
+import MasterPelanggan from 'App/Models/MasterData/MasterPelanggan'
 import PelangganValidator from 'App/Validators/PelangganValidator'
 
 export default class PelangganController {

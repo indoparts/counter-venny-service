@@ -1,13 +1,13 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
 import { column, beforeSave, BaseModel,  belongsTo, BelongsTo, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
-import Role from './Role'
-import Dept from './Dept'
-import Absensi from './Absensi'
+import Role from '../../Role'
+import Dept from '../../Dept'
+import Absensi from '../../Absensi'
 import UserGroup from './UserGroup'
 import UserGudang from './UserGudang'
 import UserOffice from './UserOffice'
-import MasterToko from './MasterToko'
+import MasterToko from '../MasterToko'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })

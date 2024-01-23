@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
-import User from './User'
+import User from './MasterData/Users/User'
 
 export default class Dept extends BaseModel {
   @column({ isPrimary: true })

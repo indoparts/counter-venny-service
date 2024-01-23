@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import JadwalIstirahat from 'App/Models/JadwalIstirahat'
-import MasterGroup from 'App/Models/MasterGroup'
-import UserGroup from 'App/Models/UserGroup'
+import MasterGroup from 'App/Models/MasterData/MasterGroup'
+import UserGroup from 'App/Models/MasterData/Users/UserGroup'
 import Ws from 'App/Services/Ws'
 import JadwalIstirahatValidator from 'App/Validators/JadwalIstirahatValidator'
 

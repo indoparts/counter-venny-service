@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Dept from './Dept'
 import Role from './Role'
-import User from './User'
+import User from './MasterData/Users/User'
 
 export default class JadwalIstirahat extends BaseModel {
   @column({ isPrimary: true })
