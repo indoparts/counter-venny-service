@@ -55,6 +55,8 @@ export default class AuthController {
             });
             return response.send({ status: true, data: token, msg: 'success' })
         } catch (error) {
+            console.log(error);
+            
             return response.send({ status: false, data: error.messages, msg: 'error' })
         }
     }

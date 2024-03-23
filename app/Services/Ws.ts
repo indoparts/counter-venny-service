@@ -16,7 +16,7 @@ class Ws {
         this.booted = true
         this.io = new Server(AdonisServer.instance, {
             cors: {
-                origin: 'http://localhost:8080',
+                origin: 'https://andyjaya.com',
                 credentials: true,
             },
             allowEIO3: true
