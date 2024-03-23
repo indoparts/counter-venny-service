@@ -1,6 +1,6 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import FormulaGaji from 'App/Models/FormulaGaji'
-import VariableGaji from 'App/Models/VariableGaji'
+import FormulaGaji from 'App/Models/Feature/FormulaGaji'
+import VariableGaji from 'App/Models/Feature/VariableGaji'
 
 export default class VariableGajiSeeder extends BaseSeeder {
   public async run () {

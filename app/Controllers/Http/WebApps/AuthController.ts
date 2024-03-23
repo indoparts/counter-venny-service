@@ -1,8 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Application from '@ioc:Adonis/Core/Application'
 import Database from '@ioc:Adonis/Lucid/Database';
-import Dept from 'App/Models/Dept';
-import Role from 'App/Models/Role';
+import Dept from 'App/Models/MasterData/Dept';
+import Role from 'App/Models/MasterData/Role';
 import User from 'App/Models/MasterData/Users/User';
 import { RegisterValidator, LoginValidator } from 'App/Validators/AuthValidator';
 import Drive from '@ioc:Adonis/Core/Drive'

@@ -1,80 +1,63 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import JadwalGroup from 'App/Models/JadwalGroup'
-import TimeConfig from 'App/Models/TimeConfig'
+import JadwalGroup from 'App/Models/Form/JadwalGroup'
 import UserGroup from 'App/Models/MasterData/Users/UserGroup'
 import TimeConfigValidator from 'App/Validators/TimeConfigValidator'
+import TimeConfigOperations from 'App/Controllers/Repositories/Operations/Tools/TimeConfigOperations'
 
 export default class TimeConfigsController {
+    private operation: any;
+    constructor() {
+        this.operation = new TimeConfigOperations();
+    }
     public async index({ bouncer, response, request }: HttpContextContract) {
         try {
-            await bouncer.authorize("read-timeconfig")
-            if (await bouncer.allows('read-timeconfig')) {
-                const { sortBy, search, sortDesc, page, limit } = request.all()
-                const fetch = await TimeConfig.query().where('type', 'LIKE', '%' + search + '%').orderBy([
-                    {
-                        column: sortBy !== '' ? sortBy : 'created_at',
-                        order: sortDesc ? 'desc' : 'asc',
-                    }
-                ]).paginate(page, limit)
-                return response.send({ status: true, data: fetch, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('viewList')
+            const q = await this.operation.paginationWithFilter(request.all(), 'type', 'created_at')
+            return response.send({ status: true, data: q, msg: 'success' })
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async store({ bouncer, request, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("create-timeconfig")
-            if (await bouncer.allows('create-timeconfig')) {
-                const payload = await request.validate(TimeConfigValidator)
-                const q = new TimeConfig()
-                q.merge(payload)
-                await q.save()
-                return response.send({ status: true, data: payload, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('create')
+            const payload = await request.validate(TimeConfigValidator)
+            const q = await this.operation.store(payload)
+            return response.send({ status: true, data: q, msg: 'success' })
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async show({ bouncer, request, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("read-timeconfig")
-            if (await bouncer.allows('read-timeconfig')) {
-                const q = await TimeConfig.find(request.param('id'));
-                return response.send({ status: true, data: q, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('view')
+            const q = await this.operation.find(request.param('id'));
+            return response.send({ status: true, data: q, msg: 'success' })
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async update({ bouncer, request, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("update-timeconfig")
-            if (await bouncer.allows('update-timeconfig')) {
-                const payload = await request.validate(TimeConfigValidator)
-                const q = await TimeConfig.findOrFail(request.param('id'))
-                q.merge(payload)
-                await q.save()
-                return response.send({ status: true, data: payload, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('update')
+            const payload = await request.validate(TimeConfigValidator)
+            const q = await this.operation.update(request.param('id'), payload)
+            return response.send({ status: true, data: q, msg: 'success' })
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async destroy({ bouncer, request, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("delete-timeconfig")
-            if (await bouncer.allows('delete-timeconfig')) {
-                const q = await TimeConfig.findOrFail(request.param('id'))
-                await q.delete()
-                return response.send({ status: true, data: {}, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('delete')
+            const q = await this.operation.find(request.param('id'))
+            return response.send({ status: true, data: q, msg: 'success' })
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
     public async jadwal_user({ response, auth }: HttpContextContract) {
@@ -89,9 +72,7 @@ export default class TimeConfigsController {
             }
             return response.status(404).send({ status: false, data: null, msg: 'data not found' })
         } catch (error) {
-            console.log(error);
-            
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 }

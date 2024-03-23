@@ -26,9 +26,9 @@ export default class Absensi extends BaseModel {
   @column()
   public foto_selfi_masuk: string
   @column()
-  public latitude_pulang: string
+  public latitude_pulang: number
   @column()
-  public longitude_pulang: string
+  public longitude_pulang: number
   @column()
   public foto_selfi_pulang: string
 

@@ -1,96 +1,61 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import MasterGroup from 'App/Models/MasterData/MasterGroup'
-import User from 'App/Models/MasterData/Users/User'
-import UserGroup from 'App/Models/MasterData/Users/UserGroup'
+import UserGroupOperations from 'App/Controllers/Repositories/Operations/Tools/UserGroupOperations'
 import UserGroupValidator from 'App/Validators/UserGroupValidator'
 
 export default class UserGroupsController {
+    private operation: any;
+    constructor() {
+        this.operation = new UserGroupOperations();
+    }
     public async index({ bouncer, response, request }: HttpContextContract) {
         try {
-            await bouncer.authorize("read-usergroup")
-            if (await bouncer.allows('read-usergroup')) {
-                const { page, limit } = request.all()
-                const fetch = await MasterGroup.query()
-                    .preload('membersTeams')
-                    .paginate(page, limit)
-                const user = await User.all()
-                const allgroup = await MasterGroup.all()
-                return response.send({ status: true, data: { datatable: fetch, user, allgroup }, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('viewList')
+            const q = await this.operation.index(request.all())
+            return response.send(q)
         } catch (error) {
-            console.log(error);
-            
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async store({ bouncer, request, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("create-usergroup")
-            if (await bouncer.allows('create-usergroup')) {
-                const payload = await request.validate(UserGroupValidator)
-                // const arrname = [] as any;
-                // const fetch = payload.user_id
-                // for (let i = 0; i < fetch.length; i++) {
-                //     arrname.push({
-                //         master_group_id: payload.master_group_id,
-                //         user_id: fetch[i]
-                //     })
-                // }
-                // await UserGroup.updateOrCreateMany(['master_group_id', 'user_id'], arrname)
-                const find = await MasterGroup.findOrFail(payload.master_group_id)
-                await find.related('members').sync(payload.user_id)
-                return response.send({ status: true, data: payload, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('create')
+            const payload = await request.validate(UserGroupValidator)
+            const q = await this.operation.stored(payload)
+            return response.send(q)
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async attr_form({ bouncer, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("read-usergroup")
-            if (await bouncer.allows('read-usergroup')) {
-                const master_group = await MasterGroup.all()
-                const user = await User.all()
-                return response.send({
-                    status: true, data: { master_group, user }, msg: 'success'
-                })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('viewList')
+            const q = await this.operation.attribute()
+            return response.send(q)
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async show({ bouncer, response, request }: HttpContextContract) {
         try {
-            await bouncer.authorize("read-usergroup")
-            if (await bouncer.allows('read-usergroup')) {
-                const id = request.param('id')
-                const fetch = await UserGroup.query()
-                    .where('master_group_id', id)
-                return response.send({ status: true, data: fetch, msg: 'success' })
-            }
+            await bouncer.with('TimeConfigPolicy').authorize('view')
+            const fetch = await this.operation.findby('master_group_id', request.param('id'))
+            return response.send({ status: true, data: fetch, msg: 'success' })
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 
     public async update({ bouncer, request, response }: HttpContextContract) {
         try {
-            await bouncer.authorize("update-usergroup")
+            await bouncer.with('TimeConfigPolicy').authorize('delete')
             const payload = await request.validate(UserGroupValidator)
-            if (await bouncer.allows('update-usergroup')) {
-                const arrname = [] as any;
-                const fetch = payload.user_id
-                for (let i = 0; i < fetch.length; i++) {
-                    arrname.push(fetch[i])
-                }
-                await (await MasterGroup.findOrFail(payload.master_group_id)).related('members').sync(arrname)
-                return response.send({ status: true, data: payload, msg: 'success' })
-            }
+            const q = await this.operation.updated(payload)
+            return response.send(q)
         } catch (error) {
-            return response.send({ status: false, data: error.messages, msg: 'error' })
+            return response.status(error.status).send(error)
         }
     }
 }

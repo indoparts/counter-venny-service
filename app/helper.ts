@@ -1,5 +1,6 @@
 import Application from '@ioc:Adonis/Core/Application'
 import Drive from '@ioc:Adonis/Core/Drive'
+import Database from '@ioc:Adonis/Lucid/Database'
 import moment from 'moment'
 export async function UploadFile(file, namefile, pathtarget) {
     return await file.move(Application.tmpPath(pathtarget), {
@@ -57,13 +58,32 @@ export function gaji_variable(variable_name, bobot, gajiperhari, periode, total_
     }
 }
 
-export function errMsg(error){
+export function errMsg(error) {
     switch (error.code) {
         case 'ER_DUP_ENTRY':
             return { msg: `${error.sqlMessage}`, status: 500 }
             break;
-    
+
         default:
             break;
     }
+}
+
+export async function permissionGuard(params: number, name: string) {
+
+    const arr: number[] = [];
+    const call = await Database
+        .from('permissions')
+        .join('role_has_permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+        .join('roles', 'role_has_permissions.role_id', '=', 'roles.id')
+        .where('permissions.name', name)
+        .select('role_has_permissions.role_id');
+    call.forEach(el => {
+        arr.push(el.role_id)
+    });
+    return arr.includes(params)
+}
+
+export const getRandomFromArray = (arr: any[]) => {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
