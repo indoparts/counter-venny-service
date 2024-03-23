@@ -9,8 +9,6 @@ export default class GajisController {
     public async index({ bouncer, request, response }: HttpContextContract) {
         try {
             await bouncer.with('GajiPolicy').authorize('viewList')
-            console.log(request.all());
-            
             const q = await this.operation.index(request.all())
             return response.send(q)
         } catch (error) {

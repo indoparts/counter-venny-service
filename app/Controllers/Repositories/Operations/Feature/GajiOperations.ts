@@ -59,10 +59,11 @@ export default class GajiOperations extends BaseRepository {
             });
             const cekdata = await Database
                 .from('gajis')
-                .where('perioda', el.perioda)
+                .where('periode', el.periode)
                 .andWhere('user_id', el.user_id)
                 .count('* as total')
-            if (cekdata[0].total < 1) {
+                
+            if (cekdata[0].total === 0) {
                 const q = new Gaji()
                 q.user_id = el.user_id
                 q.total_absen = el.total_absen
