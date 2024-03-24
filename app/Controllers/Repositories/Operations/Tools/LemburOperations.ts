@@ -7,7 +7,9 @@ export default class LemburOperations extends BaseRepository {
     }
     async index(input: any) {
         const { sortBy, search, sortDesc, page, limit } = input
-        const fetch = await FormLembur.query().where('user_id', 'LIKE', '%' + search + '%').orderBy([
+        const fetch = await FormLembur.query()
+        .where('user_id', 'LIKE', '%' + search + '%')
+        .orderBy([
             {
                 column: sortBy !== '' ? sortBy : 'id',
                 order: sortDesc ? 'desc' : 'asc',

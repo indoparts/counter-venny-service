@@ -12,9 +12,11 @@ export default class LembursController {
     public async index({ bouncer, response, request }: HttpContextContract) {
         try {
             await bouncer.with('LemburPolicy').authorize('viewList')
-            const q = this.operation.index(request.all())
+            const q = await this.operation.index(request.all())
             return response.send(q)
         } catch (error) {
+            console.log(error);
+            
             return response.status(error.status).send(error)
         }
     }
